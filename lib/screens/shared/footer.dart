@@ -10,6 +10,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../Constants.dart';
+import '../../route_generator.dart';
 
 class Footer extends StatelessWidget {
   int selectedIndex;
@@ -36,41 +37,62 @@ class Footer extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           //   Home
-          Column(
-            children: [
-              Icon(
-                Icons.home,
-                size: iconWidth,
-                color: selectedIndex == 1 ? color : null,
-              ),
-              Text(
-                "Home",
-                style: TextStyle(
+          GestureDetector(
+            onTap: () {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  RouteGenerator.generateRoute(
+                    const RouteSettings(name: Routes.homeScreen),
+                  ),
+                  (route) => false);
+            },
+            child: Column(
+              children: [
+                Icon(
+                  Icons.home,
+                  size: iconWidth,
                   color: selectedIndex == 1 ? color : null,
-                  fontWeight: FontWeight.bold,
                 ),
-              ),
-            ],
+                Text(
+                  "Home",
+                  style: TextStyle(
+                    color: selectedIndex == 1 ? color : null,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
 
           //   Trip
-          Column(
-            children: [
-              SvgPicture.asset(
-                ProjectPaths.TRIP_ICON,
-                width: iconWidth,
-                colorFilter: ColorFilter.mode(
-                  selectedIndex == 2 ? color : Colors.black,
-                  BlendMode.srcIn,
+          GestureDetector(
+            onTap: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                RouteGenerator.generateRoute(
+                  const RouteSettings(name: Routes.tripScreen),
                 ),
-              ),
-              Text(
-                "Trip",
-                style: TextStyle(
-                    color: selectedIndex == 2 ? color : null,
-                    fontWeight: FontWeight.bold),
-              )
-            ],
+                (route) => false,
+              );
+            },
+            child: Column(
+              children: [
+                SvgPicture.asset(
+                  ProjectPaths.TRIP_ICON,
+                  width: iconWidth,
+                  colorFilter: ColorFilter.mode(
+                    selectedIndex == 2 ? color : Colors.black,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                Text(
+                  "Trip",
+                  style: TextStyle(
+                      color: selectedIndex == 2 ? color : null,
+                      fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
           ),
 
           // Group
@@ -111,4 +133,8 @@ class Footer extends StatelessWidget {
       ),
     );
   }
+}
+
+class FooterProperties {
+  double footerHeight = 48;
 }

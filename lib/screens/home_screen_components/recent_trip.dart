@@ -1,3 +1,4 @@
+import 'package:expense_tracking/route_generator.dart';
 import 'package:expense_tracking/screens/shared/trip_listview_item.dart';
 import 'package:flutter/material.dart';
 
@@ -30,7 +31,16 @@ class RecentTrip extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: 3,
               itemBuilder: (BuildContext context, int index) {
-                return TripListViewItem().build(context, index);
+                return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        RouteGenerator.generateRoute(
+                          const RouteSettings(name: Routes.tripDetails),
+                        ),
+                      );
+                    },
+                    child: TripListViewItem().build(context, index));
               })
         ],
       ),

@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 
 class TripListViewItem {
   ListTile build(BuildContext context, int index) {
-    Color recentTripTileSubtitleColor = Colors.grey.shade900;
     return ListTile(
       leading: ClipOval(
         child: CircleAvatar(
@@ -30,7 +29,7 @@ class TripListViewItem {
           ),
           Text(
             " 6 Persons | ",
-            style: TextStyle(color: recentTripTileSubtitleColor),
+            style: TextStyle(color: Colors.grey.shade900),
           ),
           Icon(
             Icons.calendar_today,
@@ -39,11 +38,16 @@ class TripListViewItem {
           ),
           Text(
             " October 20",
-            style: TextStyle(color: recentTripTileSubtitleColor),
+            style: TextStyle(color: Colors.grey.shade900),
           )
           // Text("|"),
           // Text("data")
         ],
+      ),
+      trailing: const Icon(
+        Icons.arrow_forward_ios,
+        color: Colors.grey,
+        size: 18,
       ),
     );
   }

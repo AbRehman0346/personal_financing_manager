@@ -24,7 +24,7 @@ class SplashScreen extends StatelessWidget {
                 letterSpacing: 4,
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontFamily: ProjectFonts.Protest),
+                fontFamily: ProjectFonts.protest),
           ),
           Text(
             "Your Personal Finance Manager",

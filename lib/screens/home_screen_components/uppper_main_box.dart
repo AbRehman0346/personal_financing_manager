@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import '../../Constants.dart';
 
 class UpperMainBox extends StatelessWidget {
   const UpperMainBox({super.key});
@@ -27,7 +28,7 @@ class UpperMainBox extends StatelessWidget {
           child: Stack(
             children: [
               SvgPicture.asset(
-                "assets/svg/front.html",
+                ProjectPaths.front,
                 fit: BoxFit.cover,
               ),
               const Padding(

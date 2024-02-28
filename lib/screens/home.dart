@@ -1,10 +1,11 @@
 import 'dart:developer';
 import 'package:expense_tracking/Constants.dart';
-import 'package:expense_tracking/screens/home_screen_components/cappbar.dart';
+import 'package:expense_tracking/screens/shared/cappbar.dart';
 import 'package:expense_tracking/screens/shared/footer.dart';
 import 'package:expense_tracking/screens/home_screen_components/middle_cards.dart';
 import 'package:expense_tracking/screens/home_screen_components/recent_trip.dart';
 import 'package:expense_tracking/screens/home_screen_components/uppper_main_box.dart';
+import 'package:expense_tracking/screens/shared/new_trip_floating_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -18,10 +19,10 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    PreferredSizeWidget appbar = cAppBar();
+    PreferredSizeWidget appbar = cAppBar("Expense Tracking");
     double appbarHeight = appbar.preferredSize.height;
     double topHeight = MediaQuery.of(context).padding.top;
-    double footerSize = 48;
+    double footerSize = FooterProperties().footerHeight;
 
     return Scaffold(
       backgroundColor: ProjectColors.bg,
@@ -61,30 +62,7 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
-      floatingActionButton: Container(
-        padding: const EdgeInsets.all(15),
-        margin: const EdgeInsets.only(bottom: 50),
-        width: 120,
-        decoration: BoxDecoration(
-          color: ProjectColors.primaryColor,
-          borderRadius: BorderRadius.circular(50),
-        ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Icon(
-              Icons.add,
-              color: Colors.white,
-              weight: 5,
-            ),
-            Text(
-              "New Trip",
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
+      floatingActionButton: NewTripFloatingButton().build(context: context),
     );
   }
 }
