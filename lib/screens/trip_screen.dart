@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:expense_tracking/screens/shared/cappbar.dart';
 import 'package:expense_tracking/screens/shared/footer.dart';
 import 'package:expense_tracking/screens/shared/new_trip_floating_button.dart';

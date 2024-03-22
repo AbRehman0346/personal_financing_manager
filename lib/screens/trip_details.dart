@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:expense_tracking/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -104,7 +103,7 @@ class _TripDetailsState extends State<TripDetails> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     // Trip Starts
-                                    Text(
+                                    const Text(
                                       "Trip Starts",
                                       style: TextStyle(
                                         color: Colors.white60,
@@ -127,7 +126,7 @@ class _TripDetailsState extends State<TripDetails> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
+                                    const Text(
                                       "Trip Ends ",
                                       style: TextStyle(
                                         color: Colors.white60,

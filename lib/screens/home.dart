@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:expense_tracking/Constants.dart';
 import 'package:expense_tracking/screens/shared/cappbar.dart';
 import 'package:expense_tracking/screens/shared/footer.dart';
@@ -7,7 +6,6 @@ import 'package:expense_tracking/screens/home_screen_components/recent_trip.dart
 import 'package:expense_tracking/screens/home_screen_components/uppper_main_box.dart';
 import 'package:expense_tracking/screens/shared/new_trip_floating_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

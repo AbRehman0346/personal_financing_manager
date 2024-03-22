@@ -31,7 +31,7 @@ class TripListViewItem {
             " 6 Persons | ",
             style: TextStyle(color: Colors.grey.shade900),
           ),
-          Icon(
+          const Icon(
             Icons.calendar_today,
             size: 18,
             color: Colors.grey,

@@ -1,8 +1,5 @@
 import 'package:expense_tracking/screens/home.dart';
 import 'package:expense_tracking/screens/login_signup.dart';
-import 'package:expense_tracking/screens/splash_screen.dart';
-import 'package:expense_tracking/screens/test_screen.dart';
-import 'package:expense_tracking/screens/trip_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';

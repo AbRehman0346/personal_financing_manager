@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:expense_tracking/generated_files/expanse_tracking_icons_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -473,7 +472,7 @@ class _LoginSignupState extends State<LoginSignup> {
         Navigator.pushAndRemoveUntil(
             context,
             RouteGenerator.generateRoute(
-                RouteSettings(name: Routes.homeScreen)),
+                const RouteSettings(name: Routes.homeScreen)),
                 (route) => false);
       }
     } catch (e) {

@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:expense_tracking/Constants.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +40,7 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 10, top: 10),
+            padding: const EdgeInsets.only(left: 10, top: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -70,7 +69,7 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
                     Text("October 20", style: TextStyle(color: color)),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
 
@@ -102,8 +101,8 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
 
                 //Total Expense
                 Container(
-                  margin: EdgeInsets.all(10),
-                  padding: EdgeInsets.all(7),
+                  margin: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(7),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
@@ -111,14 +110,14 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         "Total Expense",
                         style: TextStyle(fontSize: 18, color: Colors.grey),
                       ),
 
                       // Total Expense: $ 300 USD
                       Container(
-                        padding: EdgeInsets.all(7),
+                        padding: const EdgeInsets.all(7),
                         decoration: BoxDecoration(
                           color: ProjectColors.shadow,
                           borderRadius: BorderRadius.circular(10),

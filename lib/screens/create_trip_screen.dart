@@ -45,20 +45,20 @@ class CreateTripScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Trip Name Text...
-          Text(
+          const Text(
             "Trip Name",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
 
           // Trip Name TextField...
-          TextField(
+          const TextField(
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               hintText: "Enter Trip Name",
             ),
           ),
 
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
 
           // Perticipants.
           Row(
@@ -84,7 +84,7 @@ class CreateTripScreen extends StatelessWidget {
                     color: ProjectColors.shadow,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Row(
+                  child: const Row(
                     children: [
                       Icon(
                         Icons.add,
@@ -185,7 +185,7 @@ class CreateTripScreen extends StatelessWidget {
                         color: ProjectColors.shadow,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Text(
+                      child: const Text(
                         "Owner",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
@@ -197,7 +197,7 @@ class CreateTripScreen extends StatelessWidget {
                         color: Colors.black,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Text(
+                      child: const Text(
                         "Invite",
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
@@ -221,7 +221,7 @@ class CreateTripScreen extends StatelessWidget {
               foregroundColor: MaterialStateProperty.all(Colors.white),
             ),
             onPressed: () {},
-            child: Text(
+            child: const Text(
               "Create Trip",
               style: TextStyle(fontSize: 18),
             ),
