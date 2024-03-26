@@ -1,9 +1,19 @@
-import 'package:flutter/material.dart';
+import 'dart:developer';
+import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../Constants.dart';
 
-class CreateTripScreen extends StatelessWidget {
-  const CreateTripScreen({super.key});
+class CreateTripScreen extends StatefulWidget {
+  CreateTripScreen({super.key});
+
+  @override
+  State<CreateTripScreen> createState() => _CreateTripScreenState();
+}
+
+class _CreateTripScreenState extends State<CreateTripScreen> {
+  Uint8List? file;
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +30,16 @@ class CreateTripScreen extends StatelessWidget {
       child: Column(
         children: [
           ClipOval(
-            child: CircleAvatar(
-              radius: 80,
-              child: Image.asset(
-                "assets/images/profileplaceholder.png",
-                width: double.maxFinite,
-                height: double.maxFinite,
-                fit: BoxFit.cover,
+            child: GestureDetector(
+              onTap: selectImage,
+              child: CircleAvatar(
+                radius: 80,
+                child: file == null ? Image.asset(
+                  "assets/images/profileplaceholder.png",
+                  width: double.maxFinite,
+                  height: double.maxFinite,
+                  fit: BoxFit.cover,
+                ) : Image.memory(file!),
               ),
             ),
           ),
@@ -255,5 +268,13 @@ class CreateTripScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void selectImage()async{
+    log("Function working!...");
+    XFile? xfile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (xfile == null) return;
+    file = await xfile.readAsBytes();
+    setState(() {});
   }
 }

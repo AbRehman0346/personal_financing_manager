@@ -1,8 +1,6 @@
 import 'package:expense_tracking/screens/home.dart';
 import 'package:expense_tracking/screens/login_signup.dart';
-import 'package:expense_tracking/screens/splash_screen.dart';
-import 'package:expense_tracking/screens/test_screen.dart';
-import 'package:expense_tracking/screens/trip_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -28,7 +26,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: StreamBuilder(stream: null, builder: (_, AsyncSnapshot snap){
+      home: StreamBuilder(stream: FirebaseAuth.instance.authStateChanges(), builder: (_, AsyncSnapshot snap){
         if (snap.hasData){
           return const Home();
         }else{

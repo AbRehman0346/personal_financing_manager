@@ -23,7 +23,7 @@ class RouteGenerator {
       case Routes.tripScreen:
         return MaterialPageRoute(builder: (_) => const TripScreen());
       case Routes.createTrip:
-        return MaterialPageRoute(builder: (_) => const CreateTripScreen());
+        return MaterialPageRoute(builder: (_) => CreateTripScreen());
       case Routes.tripDetails:
         return MaterialPageRoute(builder: (_) => const TripDetails());
       case Routes.signin_signup:
