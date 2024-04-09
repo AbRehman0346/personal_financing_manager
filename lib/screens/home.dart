@@ -19,7 +19,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    PreferredSizeWidget appbar = cAppBar("Expense Tracking");
+    PreferredSizeWidget appbar = cAppBar(context:context, title:"Expense Tracking");
     double appbarHeight = appbar.preferredSize.height;
     double topHeight = MediaQuery.of(context).padding.top;
     double footerSize = FooterProperties().footerHeight;

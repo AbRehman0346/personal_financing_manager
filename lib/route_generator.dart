@@ -1,6 +1,7 @@
 import 'package:expense_tracking/screens/create_trip_screen.dart';
 import 'package:expense_tracking/screens/home.dart';
 import 'package:expense_tracking/screens/login_signup.dart';
+import 'package:expense_tracking/screens/temp_tests/temp_tests_home.dart';
 import 'package:expense_tracking/screens/trip_details.dart';
 import 'package:expense_tracking/screens/trip_screen.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ class Routes {
   static const String createTrip = "/create trip";
   static const String tripDetails = "/trip_details";
   static const String signin_signup = "/signin_signup";
+  static const String testScreen = "test-screen";
 }
 
 class RouteGenerator {
@@ -28,6 +30,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const TripDetails());
       case Routes.signin_signup:
         return MaterialPageRoute(builder: (_) => const LoginSignup());
+      case Routes.testScreen:
+        return MaterialPageRoute(builder: (_)=>const TempTestsHome());
       default: //Error Screen
         return MaterialPageRoute(builder: (_) => const ErrorScreen());
     }

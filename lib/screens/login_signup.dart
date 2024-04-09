@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:expense_tracking/generated_files/expanse_tracking_icons_icons.dart';
+import 'package:expense_tracking/services/firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -424,28 +425,31 @@ class _LoginSignupState extends State<LoginSignup> {
 
   void signUpButtonOnPressed() async {
     try {
-      setState(() {
-        signUpLoading = true;
-      });
+      // Collecting Data
       String fullName = signUpFullNameController.text;
       String phone = signUpPhoneController.text;
       String password = signUpPasswordController.text;
       String confirmPassword = signUpConfirmPasswordController.text;
 
+      // Validation
       if (fullName == "") {
         Fluttertoast.showToast(msg: "Name is Missing");
         return;
-      } else if (phone == "") {
+      }
+      if (phone == "") {
         Fluttertoast.showToast(msg: "Phone Number is Missing");
         return;
-      } else if (phone[0] == "0") {
+      }
+      if (phone[0] == "0") {
         Fluttertoast.showToast(
             msg: "Please Remove the first zero from Phone Number");
         return;
-      } else if (password.length < 8) {
+      }
+      if (password.length < 8) {
         Fluttertoast.showToast(msg: "Password Must be of 8 Characters");
         return;
-      } else if (password != confirmPassword) {
+      }
+      if (password != confirmPassword) {
         Fluttertoast.showToast(msg: "Passwords Don't match");
         return;
       }
@@ -457,6 +461,14 @@ class _LoginSignupState extends State<LoginSignup> {
         }
       }
 
+      // Starting Loading Indicator
+      setState(() {
+        signUpLoading = true;
+      });
+
+
+      // SignUp Process--------
+      // Creating Model
       SignUpUserModel model = SignUpUserModel(
         fullName: fullName,
         phone: phone,
@@ -465,23 +477,30 @@ class _LoginSignupState extends State<LoginSignup> {
         access: AccessControl.allowed,
       );
 
+      // Signup request
       await Auth().createAccount(model);
       setState(() {
         signUpLoading = false;
       });
+
+      // Navigating to Home Page (if successful)
       if (mounted) {
+        ProjectData.user = await Firestore().getUserData(model.phone);
         Navigator.pushAndRemoveUntil(
             context,
             RouteGenerator.generateRoute(
-                RouteSettings(name: Routes.homeScreen)),
+                const RouteSettings(name: Routes.homeScreen)),
                 (route) => false);
       }
     } catch (e) {
+      // Catching Error if unsuccessful
       setState(() {
         signUpLoading = false;
       });
       if (mounted) {
-        print(e);
+        log(e.toString());
+
+        // Signup failed message showing
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: Colors.red,
@@ -497,9 +516,6 @@ class _LoginSignupState extends State<LoginSignup> {
 
   void signInButtonOnPressed() async {
     try {
-      setState(() {
-        signInLoading = true;
-      });
       String phone = signInPhoneController.text;
       String password = signInPasswordController.text;
 
@@ -511,6 +527,10 @@ class _LoginSignupState extends State<LoginSignup> {
             msg: "Please Remove the first zero from Phone Number");
         return;
       }
+
+      setState(() {
+        signInLoading = true;
+      });
 
       UserModel model = await Auth().signIn(phone, password);
       ProjectData.user = model;
@@ -530,16 +550,8 @@ class _LoginSignupState extends State<LoginSignup> {
       }
     } catch (e) {
       if (mounted) {
-        print(e);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red,
-            content: Text(
-              "Signup Failed: $e",
-              style: const TextStyle(color: Colors.white, fontSize: 18),
-            ),
-          ),
-        );
+        log(e.toString());
+        Messages().showDangerMessage(context, "Signup Failed: $e");
       }
     } finally {
       setState(() {

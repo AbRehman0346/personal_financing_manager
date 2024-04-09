@@ -20,7 +20,7 @@ class _TripScreenState extends State<TripScreen> {
 
   @override
   Widget build(BuildContext context) {
-    PreferredSizeWidget appbar = cAppBar("Trip");
+    PreferredSizeWidget appbar = cAppBar(context:context, title:"Trip");
     double appbarSize = appbar.preferredSize.height;
     double defaultPadding = MediaQuery.of(context).padding.top;
     double footerHeight = FooterProperties().footerHeight;

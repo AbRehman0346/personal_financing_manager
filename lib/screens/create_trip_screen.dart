@@ -97,7 +97,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                     color: ProjectColors.shadow,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Row(
+                  child: const Row(
                     children: [
                       Icon(
                         Icons.add,
