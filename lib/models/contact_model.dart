@@ -5,6 +5,7 @@ import '../Constants.dart';
 import '../services/firestore.dart';
 
 class ContactModel{
+  String id = "";
   String name = "";
   String number = "";
   bool? isuser;
@@ -16,8 +17,9 @@ class ContactModel{
     return ContactModel._();
   }
 
-  factory ContactModel.fill({required String name, required String number, required bool? isuser}){
+  factory ContactModel.fill({required String id, required String name, required String number, required bool? isuser}){
     ContactModel model = ContactModel._();
+    model.id = id;
     model.name = name;
     model.number = number;
     model.isowner = ServicesHelperFunction().getIdFromPhone(number) == ProjectData.user!.phone;
@@ -42,7 +44,7 @@ class ContactModel{
         if(getIsAppUser){
           isAppUser = await Firestore().isAppUser(ServicesHelperFunction().getIdFromPhone(phone.number));
         }
-        models.add(ContactModel.fill(name: contact.displayName, number: phone.number, isuser: isAppUser));
+        models.add(ContactModel.fill(id: contact.id, name: contact.displayName, number: phone.number, isuser: isAppUser));
       }
     }
     return models;

@@ -19,6 +19,7 @@ class CreateTripScreen extends StatefulWidget {
 
 class _CreateTripScreenState extends State<CreateTripScreen> {
   Uint8List? file;
+  List<String> addedContacts = [];
 
   @override
   Widget build(BuildContext context) {
@@ -226,7 +227,8 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                               Row(
                                 children: [
                                   SizedBox(
-                                    width: MediaQuery.of(context).size.width * 0.4,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.4,
                                     child: Text(
                                       contact.name,
                                       style: const TextStyle(
@@ -238,55 +240,79 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                                   ),
                                   contact.isowner
                                       ? const Text(
-                                    "  (You)",
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 15),
-                                  )
+                                          "  (You)",
+                                          style: TextStyle(
+                                              color: Colors.grey, fontSize: 15),
+                                        )
                                       : const SizedBox(),
                                 ],
                               ),
                               contact.isowner
                                   ? Container(
-                                padding: const EdgeInsets.only(
-                                    left: 10, right: 10, top: 5, bottom: 5),
-                                decoration: BoxDecoration(
-                                  color: ProjectColors.shadow,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: const Text(
-                                  "Owner",
-                                  style:
-                                  TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              )
-                                  : Container(
-                                padding: const EdgeInsets.only(
-                                    left: 10, right: 10, top: 5, bottom: 5),
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: contact.isuser == null
-                                    ? const SizedBox.shrink()
-                                    : contact.isuser!
-                                    ? const Text(
-                                  "Add",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                )
-                                    : const Text(
-                                  "Invite",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
+                                      padding: const EdgeInsets.only(
+                                          left: 10,
+                                          right: 10,
+                                          top: 5,
+                                          bottom: 5),
+                                      decoration: BoxDecoration(
+                                        color: ProjectColors.shadow,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: const Text(
+                                        "Owner",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    )
+                                  : contact.isuser == null
+                                      ? const SizedBox.shrink()
+                                      : contact.isuser!
+                                          // Add
+                                          ? Container(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10,
+                                                  right: 10,
+                                                  top: 5,
+                                                  bottom: 5),
+                                              decoration: BoxDecoration(
+                                                color: Colors.black,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: const Text(
+                                                "Add",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ))
+                                          // Invite
+                                          : Container(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10,
+                                                  right: 10,
+                                                  top: 5,
+                                                  bottom: 5),
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: const Text(
+                                                "Invite",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
                             ],
                           ),
                           subtitle: Text(contact.number),
                         ),
-                        index == contacts.length-1 ? const SizedBox(height: 80) : const SizedBox.shrink()
+                        index == contacts.length - 1
+                            ? const SizedBox(height: 80)
+                            : const SizedBox.shrink()
                       ],
                     );
                   },
@@ -366,9 +392,25 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
           "number": "+9328674769",
         },
       ];
-      List<Contact> rawContacts = data.map((e) => Contact(id: e["id"]!, phones: [Phone(number: e["number"]!, label: "mobile")], emails: [], structuredName: StructuredName(displayName: e["name"]!, namePrefix: "", givenName: "", middleName: "", familyName: "", nameSuffix: ""), organization: Organization(company: "", department: "", jobDescription: "")),).toList();
-      List<ContactModel> contacts =
-          await ContactModel.empty().getFromContacts(contacts: rawContacts, getIsAppUser: true);
+      List<Contact> rawContacts = data
+          .map(
+            (e) => Contact(
+                id: e["id"]!,
+                phones: [Phone(number: e["number"]!, label: "mobile")],
+                emails: [],
+                structuredName: StructuredName(
+                    displayName: e["name"]!,
+                    namePrefix: "",
+                    givenName: "",
+                    middleName: "",
+                    familyName: "",
+                    nameSuffix: ""),
+                organization: Organization(
+                    company: "", department: "", jobDescription: "")),
+          )
+          .toList();
+      List<ContactModel> contacts = await ContactModel.empty()
+          .getFromContacts(contacts: rawContacts, getIsAppUser: true);
       return contacts;
     } else {
       return null;
