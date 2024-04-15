@@ -1,14 +1,10 @@
-import 'package:expense_tracking/screens/create_trip_screen.dart';
-import 'package:expense_tracking/screens/home.dart';
-import 'package:expense_tracking/screens/login_signup.dart';
+import 'package:expense_tracking/screens/temp_tests/fast_contact_screen.dart';
 import 'package:expense_tracking/screens/temp_tests/getContactsScreen.dart';
-import 'package:expense_tracking/screens/temp_tests/temp_tests_home.dart';
-import 'package:expense_tracking/screens/trip_details.dart';
-import 'package:expense_tracking/screens/trip_screen.dart';
 import 'package:flutter/material.dart';
 
 class TestRoutes {
   static const String testContactScreen = "/";
+  static const String testFastContactScreen = "/fast-contact-screen";
 }
 
 class TestRouteGenerator {
@@ -18,6 +14,8 @@ class TestRouteGenerator {
     switch (settings.name) {
       case TestRoutes.testContactScreen:
         return MaterialPageRoute(builder: (_)=>const GetContacts());
+      case TestRoutes.testFastContactScreen:
+        return MaterialPageRoute(builder: (_)=> const FastContactsScreen());
       default: //Error Screen
         return MaterialPageRoute(builder: (_) => const ErrorScreen());
     }

@@ -213,4 +213,5 @@ class ProjectPaths {
   static const String PROFILE_ICON = "assets/svg/profile.svg";
   static const String front = "assets/svg/front.html";
   static const String bigFront = "assets/svg/big_front.svg";
+  static const String profilePlaceholderImage = "assets/images/profileplaceholder.png";
 }

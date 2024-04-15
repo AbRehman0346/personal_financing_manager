@@ -41,6 +41,22 @@ class _LoginSignupState extends State<LoginSignup> {
   late Color activatedBoxHeadingUnderLineColor;
   late Color deactivatedBoxHeadingUnderLineColor;
 
+  List countryCodes = [{
+    "label": "+92",
+    "value" : "92",
+  },
+    {
+      "label": "+91",
+      "value" : "91",
+    },
+    {
+      "label": "+1",
+      "value" : "1",
+    },
+  ];
+  String? signupSelectedCountryCode = "92";
+  String? signinSelectedCountryCode = "92";
+
   @override
   Widget build(BuildContext context) {
     boxHeight = MediaQuery.of(context).size.height * 0.6;
@@ -199,10 +215,25 @@ class _LoginSignupState extends State<LoginSignup> {
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  const Text(
-                                    "+92",
-                                    style: TextStyle(fontSize: 16),
+                                  // Dropdown
+                                  Container(
+                                  width: 55,
+                                  height: 20,
+                                    child: DropdownButton(
+                                      items: countryCodes.map(
+                                            (e) => DropdownMenuItem(value: e["value"],child:
+                                      Text(e["label"]),
+                                      ),).toList(),
+                                      onChanged: (value){
+                                          setState(() {
+                                            signupSelectedCountryCode = value.toString();
+                                          });
+                                      },
+                                      value: signupSelectedCountryCode,
+                                    ),
                                   ),
+
+
                                   const SizedBox(width: 5),
                                   Expanded(
                                     child: TextField(
@@ -345,7 +376,7 @@ class _LoginSignupState extends State<LoginSignup> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // TextFields Name, Number, Password, Confirm Password
+                        // TextFields Name, Number, Password
                         Container(
                           alignment: Alignment.topLeft,
                           margin: const EdgeInsets.only(top: 80),
@@ -358,9 +389,22 @@ class _LoginSignupState extends State<LoginSignup> {
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  const Text(
-                                    "+92",
-                                    style: TextStyle(fontSize: 16),
+                                  // Country Code drop down button container
+                                  SizedBox(
+                                    width: 55,
+                                    height: 20,
+                                    child: DropdownButton(
+                                      items: countryCodes.map(
+                                            (e) => DropdownMenuItem(value: e["value"],child:
+                                        Text(e["label"]),
+                                        ),).toList(),
+                                      onChanged: (value){
+                                        setState(() {
+                                          signinSelectedCountryCode = value.toString();
+                                        });
+                                      },
+                                      value: signinSelectedCountryCode,
+                                    ),
                                   ),
                                   const SizedBox(width: 5),
                                   Expanded(
@@ -454,12 +498,21 @@ class _LoginSignupState extends State<LoginSignup> {
         return;
       }
 
+
       for (int i = 0; i < phone.length; i++) {
         if (phone.codeUnitAt(i) < 48 && phone.codeUnitAt(i) > 57) {
           Fluttertoast.showToast(msg: "Phone can only contain numbers");
           return;
         }
       }
+
+      if (signupSelectedCountryCode == null){
+        Fluttertoast.showToast(msg: "Unexpected Error in Country Code.");
+        return;
+      }else{
+        phone = signupSelectedCountryCode! + phone;
+      }
+
 
       // Starting Loading Indicator
       setState(() {
@@ -485,7 +538,7 @@ class _LoginSignupState extends State<LoginSignup> {
 
       // Navigating to Home Page (if successful)
       if (mounted) {
-        ProjectData.user = await Firestore().getUserData(model.phone);
+        ProjectData.user = await Firestore().getUserData(model.email);
         Navigator.pushAndRemoveUntil(
             context,
             RouteGenerator.generateRoute(
@@ -528,12 +581,18 @@ class _LoginSignupState extends State<LoginSignup> {
         return;
       }
 
+      if (signinSelectedCountryCode == null){
+        Fluttertoast.showToast(msg: "Unexpected Error in Country Code.");
+        return;
+      }else{
+        phone = signinSelectedCountryCode! + phone;
+      }
+
       setState(() {
         signInLoading = true;
       });
 
       UserModel model = await Auth().signIn(phone, password);
-      ProjectData.user = model;
 
       // This code is commented because the StreamBuilder in main file
       // automatically navigates to the home page.
