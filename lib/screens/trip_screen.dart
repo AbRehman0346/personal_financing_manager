@@ -1,12 +1,15 @@
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracking/screens/shared/cappbar.dart';
 import 'package:expense_tracking/screens/shared/footer.dart';
 import 'package:expense_tracking/screens/shared/new_trip_floating_button.dart';
 import 'package:expense_tracking/screens/shared/ongoing_history_trip_toggle_button.dart';
 import 'package:expense_tracking/screens/trip_screen_components/ongoing_trip_tab.dart';
 import 'package:expense_tracking/screens/trip_screen_components/trip_history_tab.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Constants.dart';
+import '../services/firestore/firestore.dart';
 
 class TripScreen extends StatefulWidget {
   const TripScreen({super.key});
@@ -28,38 +31,50 @@ class _TripScreenState extends State<TripScreen> {
     return Scaffold(
       backgroundColor: ProjectColors.bg,
       appBar: appbar,
-      body: Column(
-        children: [
-          // Toggle Button
-          SizedBox(
-            height: MediaQuery.of(context).size.height -
-                appbarSize -
-                defaultPadding -
-                footerHeight,
-            child: Column(
+      body: FutureBuilder(
+        future: Firestore().getTrips(),
+        builder: (context, AsyncSnapshot snap){
+          if (snap.hasData){
+            List<DocumentSnapshot> docs = snap.data.docs;
+            return Column(
               children: [
-                const Divider(),
+                // Toggle Button
+                SizedBox(
+                  height: MediaQuery.of(context).size.height -
+                      appbarSize -
+                      defaultPadding -
+                      footerHeight,
+                  child: Column(
+                    children: [
+                      const Divider(),
 
-                //   Toggle Button
-                OnGoingTripHistoryToggleButton().build(
-                    context: context,
-                    isFirstSelected: isFirstSelected,
-                    onPressed: () {
-                      setState(() {
-                        isFirstSelected = !isFirstSelected;
-                      });
-                    }),
-                isFirstSelected
-                    ? const OngoingTripTab()
-                    : const TripHistoryTab(),
+                      //   Toggle Button
+                      OnGoingTripHistoryToggleButton().build(
+                          context: context,
+                          isFirstSelected: isFirstSelected,
+                          onPressed: () {
+                            setState(() {
+                              isFirstSelected = !isFirstSelected;
+                            });
+                          }),
+                      isFirstSelected
+                          ? OngoingTripTab(docs: docs)
+                          : const TripHistoryTab(),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: footerHeight,
+                  child: Footer(selectedIndex: 2),
+                ),
               ],
-            ),
-          ),
-          SizedBox(
-            height: footerHeight,
-            child: Footer(selectedIndex: 2),
-          ),
-        ],
+            );
+          }else{
+            return const Center(
+              child: CupertinoActivityIndicator(),
+            );
+          }
+        },
       ),
       floatingActionButton: isFirstSelected
           ? null

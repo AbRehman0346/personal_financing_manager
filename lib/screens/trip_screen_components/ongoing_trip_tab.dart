@@ -1,10 +1,15 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracking/Constants.dart';
+import 'package:expense_tracking/models/trip_model.dart';
+import 'package:expense_tracking/services/general_services.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class OngoingTripTab extends StatefulWidget {
-  const OngoingTripTab({super.key});
+  final List<DocumentSnapshot> docs;
+  const OngoingTripTab({super.key, required this.docs});
 
   @override
   State<OngoingTripTab> createState() => _OngoingTripTabState();
@@ -13,15 +18,17 @@ class OngoingTripTab extends StatefulWidget {
 class _OngoingTripTabState extends State<OngoingTripTab> {
   @override
   Widget build(BuildContext context) {
+    List<DocumentSnapshot> docs = widget.docs;
     return Expanded(
       child: ListView.builder(
-        itemCount: 1,
-        itemBuilder: (context, index) => Card(),
+        itemCount: docs.length,
+        itemBuilder: (context, index) => _card(docs[index]),
       ),
     );
   }
 
-  Widget Card() {
+  Widget _card(DocumentSnapshot doc) {
+    TripModel trip = TripModel.fromDocumentSnapshot(doc);
     double paddingOfImages = -30;
     Color color = Colors.grey.shade700;
     return Container(
@@ -36,19 +43,26 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
           ClipRRect(
             borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-            child: Image.asset(
-              "assets/images/Pakistan_scene.jpg",
+            child: Image.network(
+              trip.image,
+              height: 200,
+              width: MediaQuery.of(context).size.width,
+              fit: BoxFit.cover,
             ),
+
+            // Image.asset(
+            //   "assets/images/Pakistan_scene.jpg",
+            // ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 10, top: 10),
+            padding: const EdgeInsets.only(left: 10, top: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Trip Tite.
-                const Text(
-                  "Trip to Pakistan",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                Text(
+                  trip.tripName,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
 
                 // Number of persons and date.
@@ -59,7 +73,7 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
                       color: color,
                     ),
                     Text(
-                      " 6 Persons | ",
+                      " ${trip.participants.length} Persons | ",
                       style: TextStyle(color: color),
                     ),
                     Icon(
@@ -67,16 +81,16 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
                       size: 15,
                       color: color,
                     ),
-                    Text("October 20", style: TextStyle(color: color)),
+                    Text(GeneralServices().formatDateTime(trip.tripStarts), style: TextStyle(color: color)),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
 
                 // Pictures...
                 Stack(
-                  children: List.generate(5, (index) {
+                  children: List.generate(trip.participants.length > 5 ? 5 : trip.participants.length, (index) {
                     paddingOfImages += 30;
                     return Container(
                       padding: EdgeInsets.only(left: paddingOfImages),
@@ -87,12 +101,19 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
                         ),
                         child: ClipOval(
                           child: CircleAvatar(
-                            child: Image.asset(
-                              "assets/images/me.jpg",
-                              fit: BoxFit.cover,
-                              width: double.maxFinite,
-                              height: double.maxFinite,
-                            ),
+                            child: FutureBuilder(future: null, builder: (context, AsyncSnapshot snap){
+                              if (snap.hasData){
+
+                              }else{
+                                return const CupertinoActivityIndicator();
+                              }
+                              return Image.asset(
+                                "assets/images/me.jpg",
+                                fit: BoxFit.cover,
+                                width: double.maxFinite,
+                                height: double.maxFinite,
+                              );
+                            }),
                           ),
                         ),
                       ),
