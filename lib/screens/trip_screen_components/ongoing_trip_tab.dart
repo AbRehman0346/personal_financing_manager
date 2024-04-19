@@ -111,7 +111,7 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         "Total Expense",
                         style: TextStyle(fontSize: 18, color: Colors.grey),
                       ),

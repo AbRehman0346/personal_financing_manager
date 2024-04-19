@@ -30,6 +30,7 @@ class _TripScreenState extends State<TripScreen> {
       appBar: appbar,
       body: Column(
         children: [
+          // Toggle Button
           SizedBox(
             height: MediaQuery.of(context).size.height -
                 appbarSize -

@@ -2,7 +2,7 @@ import 'package:expense_tracking/services/services_helper_functions.dart';
 import 'package:fast_contacts/fast_contacts.dart';
 
 import '../Constants.dart';
-import '../services/firestore.dart';
+import '../services/firestore/firestore_auth.dart';
 
 class ContactModel{
   String id = "";
@@ -42,7 +42,7 @@ class ContactModel{
       for (Phone phone in contact.phones){
         bool? isAppUser;
         if(getIsAppUser){
-          isAppUser = await Firestore().isAppUser(ServicesHelperFunction().getIdFromPhone(phone.number));
+          isAppUser = await FirestoreAuth().isAppUser(ServicesHelperFunction().getIdFromPhone(phone.number));
         }
         models.add(ContactModel.fill(id: contact.id, name: contact.displayName, number: phone.number, isuser: isAppUser));
       }

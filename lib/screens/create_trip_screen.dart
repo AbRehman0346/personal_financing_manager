@@ -1,14 +1,20 @@
 import 'dart:developer';
 import 'dart:typed_data';
+import 'package:expense_tracking/models/trip_model.dart';
 import 'package:expense_tracking/models/user_data_model.dart';
+import 'package:expense_tracking/services/firestore/firestore.dart';
+import 'package:expense_tracking/services/general_services.dart';
 import 'package:expense_tracking/services/permissions.dart';
 import 'package:expense_tracking/services/services_helper_functions.dart';
+import 'package:expense_tracking/services/storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:fast_contacts/fast_contacts.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../Constants.dart';
 import '../models/contact_model.dart';
+import '../models/upload/TripUploadModel.dart';
 
 class CreateTripScreen extends StatefulWidget {
   CreateTripScreen({super.key});
@@ -19,7 +25,9 @@ class CreateTripScreen extends StatefulWidget {
 
 class _CreateTripScreenState extends State<CreateTripScreen> {
   Uint8List? file;
-  List<String> addedContacts = [];
+  // List<ContactModel> addedContacts = [];
+  List<String> addedContactNumbers = [];
+  TextEditingController tripNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +41,19 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
       actions: [
         TextButton(
             onPressed: () async {
-              // if (await FlutterContacts.requestPermission()){
-              //   List<Contact> contacts = await FlutterContacts.getContacts(withProperties: true, withPhoto: true, withThumbnail: true, withAccounts: true, withGroups: true);
-              //   log(contacts.isEmpty.toString());
-              // }
+
+if (file != null){
+  String response = await Storage().uploadProfileImage(file!);
+  if (response != ""){
+    log("File uploaded Successfully");
+  }else{
+    log("Some error occurred");
+  }
+
+}else{
+  log("File is null");
+}
+
             },
             child: const Text("Test"))
       ],
@@ -87,6 +104,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
 
           // Trip Name TextField...
           TextField(
+            controller: tripNameController,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               hintText: "Enter Trip Name",
@@ -148,15 +166,17 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          // Create Trip Button
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
+            // Create Trip Button
             child: ElevatedButton(
               style: ButtonStyle(
                 backgroundColor:
                     MaterialStateProperty.all(ProjectColors.primaryColor),
                 foregroundColor: MaterialStateProperty.all(Colors.white),
               ),
-              onPressed: () {},
+              onPressed: createTrip,
               child: const Text(
                 "Create Trip",
                 style: TextStyle(fontSize: 18),
@@ -202,11 +222,25 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                 );
               }
 
+              void addRemoveContactActionHandler(ContactModel contact, bool action){
+                    // in action, true means add and false means remove.
+                    setState(() {
+                      if (action){
+                        // addedContacts.add(contact);
+                        addedContactNumbers.add(contact.number);
+                      }else{
+                        addedContactNumbers.remove(contact.number);
+                        // addedContacts.removeAt(index);
+                      }
+                    });
+              }
+
               return Expanded(
                 child: ListView.builder(
                   itemCount: contacts.length,
                   itemBuilder: (BuildContext context, int index) {
                     ContactModel contact = contacts[index];
+                    bool isAdded = addedContactNumbers.contains(contact.number);
                     return Column(
                       children: [
                         ListTile(
@@ -268,24 +302,27 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                                       ? const SizedBox.shrink()
                                       : contact.isuser!
                                           // Add
-                                          ? Container(
-                                              padding: const EdgeInsets.only(
-                                                  left: 10,
-                                                  right: 10,
-                                                  top: 5,
-                                                  bottom: 5),
-                                              decoration: BoxDecoration(
-                                                color: Colors.black,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: const Text(
-                                                "Add",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ))
+                                          ? GestureDetector(
+                                onTap: () => addRemoveContactActionHandler(contact, !isAdded),
+                                            child: Container(
+                                                padding: const EdgeInsets.only(
+                                                    left: 10,
+                                                    right: 10,
+                                                    top: 5,
+                                                    bottom: 5),
+                                                decoration: BoxDecoration(
+                                                  color: isAdded ? Colors.blue : Colors.black,
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                ),
+                                                child: Text(
+                                                  isAdded ? "Added":"Add",
+                                                  style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )),
+                                          )
                                           // Invite
                                           : Container(
                                               padding: const EdgeInsets.only(
@@ -351,6 +388,54 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
     );
   }
 
+  void createTrip()async {
+    CustomDialogs dialogs = CustomDialogs();
+    dialogs.showProgressBar(context);
+
+    // Collecting All Data and storing in variables.
+    Uint8List? file = this.file;
+    String name = tripNameController.text;
+    List<String> participants = addedContactNumbers;
+    String? error;
+
+    //Validation
+    if (name == ""){
+      error = "Provide Trip Name";
+    }else if (participants.isEmpty){
+      error = "Add at least one participant";
+    }
+
+    if (error != null){
+      CustomDialogs().showWarningMessage(context, error);
+      Navigator.pop(context);
+      return;
+    }
+
+
+
+    // Creating Trip
+    TripUploadModel trip = TripUploadModel(tripName: name, image: file, participants: participants);
+    try{
+      await Firestore().createTrip(trip);
+      if(mounted){
+        Fluttertoast.showToast(msg: "Trip Created");
+        // Hiding the progress bar
+        Navigator.pop(context);
+        // Retuning from create trip page.
+        Navigator.pop(context);
+      }
+    }catch(e){
+      log("Exception in creating trip $e");
+      if (mounted){
+        CustomDialogs().showDangerMessage(context, "Failed to Create Trip");
+      }
+      // Hiding progress bar.
+      if(mounted){
+        Navigator.pop(context);
+      }
+    }
+  }
+
   void selectImage() async {
     XFile? xfile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (xfile == null) return;
@@ -372,22 +457,22 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
           "number": "+923053717314",
         },
         {
-          "id": "1",
+          "id": "2",
           "name": "High Court",
           "number": "+923033719258",
         },
         {
-          "id": "1",
+          "id": "3",
           "name": "Sam",
           "number": "+923063763586",
         },
         {
-          "id": "1",
+          "id": "4",
           "name": "abdul",
           "number": "+923033372287",
         },
         {
-          "id": "1",
+          "id": "5",
           "name": "unknown",
           "number": "+9328674769",
         },
@@ -405,7 +490,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                     middleName: "",
                     familyName: "",
                     nameSuffix: ""),
-                organization: Organization(
+                organization: const Organization(
                     company: "", department: "", jobDescription: "")),
           )
           .toList();

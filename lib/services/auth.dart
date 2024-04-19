@@ -3,18 +3,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../Constants.dart';
 import '../models/sign_up_models.dart';
 import '../models/user_data_model.dart';
-import 'firestore.dart';
+import 'firestore/firestore_auth.dart';
 
 class Auth{
   FirebaseAuth auth = FirebaseAuth.instance;
   Future<UserCredential> createAccount(SignUpUserModel model)async{
     UserCredential user = await auth.createUserWithEmailAndPassword(email: model.email, password: model.password);
-    await Firestore().createAccount(model);
+    await FirestoreAuth().createAccount(model);
     return user;
   }
 
   Future<UserModel> signIn(String phone, String password) async {
-    UserModel model = await Firestore().getUserData(phone);
+    UserModel model = await FirestoreAuth().getUserData(phone);
     if (model.isAccessAllowed) {
       await auth.signInWithEmailAndPassword(email: ServicesHelperFunction().convertPhoneToEmail(phone), password: password);
     }

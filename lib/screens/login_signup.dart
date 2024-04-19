@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:expense_tracking/generated_files/expanse_tracking_icons_icons.dart';
-import 'package:expense_tracking/services/firestore.dart';
+import 'package:expense_tracking/services/firestore/firestore_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -538,7 +538,7 @@ class _LoginSignupState extends State<LoginSignup> {
 
       // Navigating to Home Page (if successful)
       if (mounted) {
-        ProjectData.user = await Firestore().getUserData(model.email);
+        ProjectData.user = await FirestoreAuth().getUserData(model.email);
         Navigator.pushAndRemoveUntil(
             context,
             RouteGenerator.generateRoute(
@@ -604,13 +604,13 @@ class _LoginSignupState extends State<LoginSignup> {
               (route) => false,
         );
       } else if(mounted && model.access == AccessControl.denied){
-        Messages().showOKDialog(context, "User Blocked", "You're Not Allowed to access the Application\nFor More info Contact at: ${ProjectData().contactEmail}");
+        CustomDialogs().showOKDialog(context, "User Blocked", "You're Not Allowed to access the Application\nFor More info Contact at: ${ProjectData().contactEmail}");
         return;
       }
     } catch (e) {
       if (mounted) {
         log(e.toString());
-        Messages().showDangerMessage(context, "Signup Failed: $e");
+        CustomDialogs().showDangerMessage(context, "Signup Failed: $e");
       }
     } finally {
       setState(() {

@@ -10,7 +10,7 @@ class UserRoles {
 }
 
 
-class Messages {
+class CustomDialogs {
   void showDangerMessage(BuildContext context, String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -20,6 +20,19 @@ class Messages {
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
         ),
         backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  void showWarningMessage(BuildContext context, String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          msg,
+          style: const TextStyle(
+              color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15),
+        ),
+        backgroundColor: Colors.yellow,
       ),
     );
   }
@@ -158,14 +171,14 @@ class Messages {
           TextButton(
             onPressed: () {
               try {
-                Messages().showProgressBar(context);
+                CustomDialogs().showProgressBar(context);
                 primaryButtonOnPressed();
                 Navigator.pop(context);
                 Navigator.pop(context);
                 controller?.text = "";
                 Fluttertoast.showToast(msg: successMsg ?? "Operation Successful");
               } catch (e) {
-                Messages()
+                CustomDialogs()
                     .showDangerMessage(context, "Operation Failed: $e");
               }
             },

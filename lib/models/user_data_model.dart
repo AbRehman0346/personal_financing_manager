@@ -4,10 +4,10 @@ import 'package:expense_tracking/models/sign_up_models.dart';
 import '../Constants.dart';
 
 class UserModel{
+  String accountId;
   String name;
   String phone;
   String role;
-  String accountId;
   String access;
 
   UserModel({required this.name, required this.phone, required this.role, required this.accountId, required this.access});
@@ -15,7 +15,7 @@ class UserModel{
   factory UserModel.fromDocumentSnapshot(DocumentSnapshot snap){
     SignUpUserModelFields fields = SignUpUserModelFields();
     return UserModel(
-      accountId: snap.id,
+        accountId: snap.id,
         name: snap.get(fields.nameField),
         phone: snap.get(fields.phoneField),
         role: snap.get(fields.roleField),

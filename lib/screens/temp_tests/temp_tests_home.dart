@@ -1,6 +1,6 @@
 import 'package:expense_tracking/screens/temp_tests/test_route_generator.dart';
 import 'package:expense_tracking/services/auth.dart';
-import 'package:expense_tracking/services/firestore.dart';
+import 'package:expense_tracking/services/firestore/firestore_auth.dart';
 import 'package:flutter/material.dart';
 
 class TempTestsHome extends StatefulWidget {
@@ -17,7 +17,7 @@ class _TempTestsHomeState extends State<TempTestsHome> {
       appBar: AppBar(title: const Text("Test Screen"),
       actions: [
         TextButton(onPressed: (){
-          Firestore().isAppUser("+9230637635868");
+          FirestoreAuth().isAppUser("+9230637635868");
         }
             , child:Text("Tap to Test"))
       ],

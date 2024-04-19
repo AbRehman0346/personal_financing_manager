@@ -3,7 +3,7 @@ import 'package:expense_tracking/Constants.dart';
 import 'package:expense_tracking/models/user_data_model.dart';
 import 'package:expense_tracking/screens/home.dart';
 import 'package:expense_tracking/screens/login_signup.dart';
-import 'package:expense_tracking/services/firestore.dart';
+import 'package:expense_tracking/services/firestore/firestore_auth.dart';
 import 'package:expense_tracking/services/services_helper_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
           builder: (_, AsyncSnapshot snap){
         if (snap.hasData){
           User user = snap.data;
-          Firestore().getUserData(
+          FirestoreAuth().getUserData(
               ServicesHelperFunction().convertEmailToPhone(user.email!))
               .then((value) => ProjectData.user = value);
           return const Home();
