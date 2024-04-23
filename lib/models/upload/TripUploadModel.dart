@@ -6,14 +6,16 @@ class TripUploadModel{
   String? tripId;
   String tripName;
   List<String> participants;
+  String owner;
   Uint8List? image;
 
 
   TripUploadModel({
     this.tripId,
     required this.tripName,
-    this.image,
+    required this.owner,
     required this.participants,
+    this.image,
   });
 
 
@@ -25,7 +27,9 @@ class TripUploadModel{
       f.participantsField: participants,
       f.imageField: imageURL,
       f.tripStartField: DateTime.now().toString(),
-      f.isEnded: false,
+      f.paymentField: [],
+      f.endDateField: null,
+      f.owner: owner,
     };
   }
 }

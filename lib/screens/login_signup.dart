@@ -1,6 +1,9 @@
 import 'dart:developer';
+import 'dart:typed_data';
 import 'package:expense_tracking/generated_files/expanse_tracking_icons_icons.dart';
 import 'package:expense_tracking/services/firestore/firestore_auth.dart';
+import 'package:expense_tracking/utils/general_services.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -57,6 +60,8 @@ class _LoginSignupState extends State<LoginSignup> {
   String? signupSelectedCountryCode = "92";
   String? signinSelectedCountryCode = "92";
 
+  Uint8List? image;
+
   @override
   Widget build(BuildContext context) {
     boxHeight = MediaQuery.of(context).size.height * 0.6;
@@ -80,28 +85,28 @@ class _LoginSignupState extends State<LoginSignup> {
         child: SafeArea(
           child: SizedBox(
             width: MediaQuery.of(context).size.width,
-            // height: MediaQuery.of(context).size.height,
+            height: MediaQuery.of(context).size.height,
             child: Column(
-              // mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Page Primary Text
-                Text(
-                  mainText,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold),
-                ),
-                // Page Secondary Text
-                Text(
-                  secondaryText,
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
+                // Text(
+                //   mainText,
+                //   style: const TextStyle(
+                //       color: Colors.white,
+                //       fontSize: 40,
+                //       fontWeight: FontWeight.bold),
+                // ),
+                // // Page Secondary Text
+                // Text(
+                //   secondaryText,
+                //   style: const TextStyle(
+                //       color: Colors.white, fontWeight: FontWeight.bold),
+                // ),
 
                 // Spacing
-                const SizedBox(height: 70),
+                // const SizedBox(height: 70),
 
                 showSignUPFirst
                     ? Stack(
@@ -182,6 +187,33 @@ class _LoginSignupState extends State<LoginSignup> {
                                   ? activatedBoxHeadingUnderLineColor
                                   : deactivatedBoxHeadingUnderLineColor,
                               borderRadius: BorderRadius.circular(10)),
+                        ),
+
+                        const SizedBox(height: 30),
+                        // images
+                        GestureDetector(
+                          onTap:  () async{
+                            image = await GeneralServices().getImageFromGallery();
+                                setState(() {});
+                          },
+                          // images
+                          child: ClipOval(
+                            child: CircleAvatar(
+                              radius: 30,
+                              child: image != null ?
+                              Image.memory(image!,
+                                fit: BoxFit.cover,
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height,
+                              ):  //     profile image
+                              Image.asset(
+                                ProjectPaths.profilePlaceholderImage,
+                                fit: BoxFit.cover,
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height,
+                              ), //     Placeholder image
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -283,6 +315,7 @@ class _LoginSignupState extends State<LoginSignup> {
                 ],
               ),
             ),
+
             // Sign Up Button
             Container(
               alignment: Alignment.bottomCenter,
@@ -474,6 +507,7 @@ class _LoginSignupState extends State<LoginSignup> {
       String phone = signUpPhoneController.text;
       String password = signUpPasswordController.text;
       String confirmPassword = signUpConfirmPasswordController.text;
+      Uint8List? image = this.image;
 
       // Validation
       if (fullName == "") {
@@ -484,11 +518,13 @@ class _LoginSignupState extends State<LoginSignup> {
         Fluttertoast.showToast(msg: "Phone Number is Missing");
         return;
       }
+
       if (phone[0] == "0") {
         Fluttertoast.showToast(
             msg: "Please Remove the first zero from Phone Number");
         return;
       }
+
       if (password.length < 8) {
         Fluttertoast.showToast(msg: "Password Must be of 8 Characters");
         return;
@@ -499,6 +535,7 @@ class _LoginSignupState extends State<LoginSignup> {
       }
 
 
+      // checking if number contains alphabet characters
       for (int i = 0; i < phone.length; i++) {
         if (phone.codeUnitAt(i) < 48 && phone.codeUnitAt(i) > 57) {
           Fluttertoast.showToast(msg: "Phone can only contain numbers");
@@ -526,8 +563,7 @@ class _LoginSignupState extends State<LoginSignup> {
         fullName: fullName,
         phone: phone,
         password: password,
-        role: UserRoles().student,
-        access: AccessControl.allowed,
+        image: image,
       );
 
       // Signup request
@@ -596,16 +632,13 @@ class _LoginSignupState extends State<LoginSignup> {
 
       // This code is commented because the StreamBuilder in main file
       // automatically navigates to the home page.
-      if (mounted && model.access == AccessControl.allowed){
+      if (mounted){
         Navigator.pushAndRemoveUntil(
           context,
           RouteGenerator.generateRoute(
               const RouteSettings(name: Routes.homeScreen)),
               (route) => false,
         );
-      } else if(mounted && model.access == AccessControl.denied){
-        CustomDialogs().showOKDialog(context, "User Blocked", "You're Not Allowed to access the Application\nFor More info Contact at: ${ProjectData().contactEmail}");
-        return;
       }
     } catch (e) {
       if (mounted) {

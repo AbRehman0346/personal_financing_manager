@@ -3,7 +3,8 @@ import 'dart:typed_data';
 import 'package:expense_tracking/models/trip_model.dart';
 import 'package:expense_tracking/models/user_data_model.dart';
 import 'package:expense_tracking/services/firestore/firestore.dart';
-import 'package:expense_tracking/services/general_services.dart';
+import 'package:expense_tracking/services/os.dart';
+import 'package:expense_tracking/utils/general_services.dart';
 import 'package:expense_tracking/services/permissions.dart';
 import 'package:expense_tracking/services/services_helper_functions.dart';
 import 'package:expense_tracking/services/storage.dart';
@@ -28,6 +29,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
   // List<ContactModel> addedContacts = [];
   List<String> addedContactNumbers = [];
   TextEditingController tripNameController = TextEditingController();
+  GeneralServices gservice = GeneralServices();
 
   @override
   Widget build(BuildContext context) {
@@ -42,17 +44,8 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
         TextButton(
             onPressed: () async {
 
-if (file != null){
-  String response = await Storage().uploadProfileImage(file!);
-  if (response != ""){
-    log("File uploaded Successfully");
-  }else{
-    log("Some error occurred");
-  }
-
-}else{
-  log("File is null");
-}
+                String? url = await Storage().getProfileImageFromPhone("9234689423920");
+                log("Here is URL: $url");
 
             },
             child: const Text("Test"))
@@ -189,7 +182,7 @@ if (file != null){
 
     Widget listOfParticipants() {
       return FutureBuilder(
-          future: getContacts(),
+          future: OS().getContacts(),
           builder: (BuildContext contact, AsyncSnapshot snap) {
             if (snap.hasData) {
               List<ContactModel>? contacts = snap.data;
@@ -227,9 +220,9 @@ if (file != null){
                     setState(() {
                       if (action){
                         // addedContacts.add(contact);
-                        addedContactNumbers.add(contact.number);
+                        addedContactNumbers.add(gservice.getIdFromPhone(contact.number));
                       }else{
-                        addedContactNumbers.remove(contact.number);
+                        addedContactNumbers.remove(gservice.getIdFromPhone(contact.number));
                         // addedContacts.removeAt(index);
                       }
                     });
@@ -240,7 +233,7 @@ if (file != null){
                   itemCount: contacts.length,
                   itemBuilder: (BuildContext context, int index) {
                     ContactModel contact = contacts[index];
-                    bool isAdded = addedContactNumbers.contains(contact.number);
+                    bool isAdded = addedContactNumbers.contains(gservice.getIdFromPhone(contact.number));
                     return Column(
                       children: [
                         ListTile(
@@ -390,13 +383,22 @@ if (file != null){
 
   void createTrip()async {
     CustomDialogs dialogs = CustomDialogs();
-    dialogs.showProgressBar(context);
+    dialogs.showAndroidProgressBar(context);
 
     // Collecting All Data and storing in variables.
     Uint8List? file = this.file;
     String name = tripNameController.text;
     List<String> participants = addedContactNumbers;
     String? error;
+
+    if (ProjectData.user == null){
+      String msg = "An Unexpected error occured: Can't find user data";
+      CustomDialogs().showDangerMessage(context, msg);
+      return;
+    }
+
+    String owner = ProjectData.user!.phone;
+    participants.add(owner);
 
     //Validation
     if (name == ""){
@@ -414,7 +416,7 @@ if (file != null){
 
 
     // Creating Trip
-    TripUploadModel trip = TripUploadModel(tripName: name, image: file, participants: participants);
+    TripUploadModel trip = TripUploadModel(tripName: name, image: file, participants: participants, owner: owner);
     try{
       await Firestore().createTrip(trip);
       if(mounted){
@@ -437,68 +439,7 @@ if (file != null){
   }
 
   void selectImage() async {
-    XFile? xfile = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (xfile == null) return;
-    file = await xfile.readAsBytes();
+    file = await GeneralServices().getImageFromGallery();
     setState(() {});
-  }
-
-  Future<List<ContactModel>?> getContacts() async {
-    // returns null when contact permission is denied
-    // return contact list or empty list based on contacts available in device.
-    if (await HandlePermissions().handleContactPermission()) {
-      // List<Contact> rawContacts = await FastContacts.getAllContacts();
-      // TODO: Need to uncomment above line to get the actual data
-      // TODO: Need to remove the below raw data...
-      List<Map<String, String>> data = [
-        {
-          "id": "1",
-          "name": "Supreme Court",
-          "number": "+923053717314",
-        },
-        {
-          "id": "2",
-          "name": "High Court",
-          "number": "+923033719258",
-        },
-        {
-          "id": "3",
-          "name": "Sam",
-          "number": "+923063763586",
-        },
-        {
-          "id": "4",
-          "name": "abdul",
-          "number": "+923033372287",
-        },
-        {
-          "id": "5",
-          "name": "unknown",
-          "number": "+9328674769",
-        },
-      ];
-      List<Contact> rawContacts = data
-          .map(
-            (e) => Contact(
-                id: e["id"]!,
-                phones: [Phone(number: e["number"]!, label: "mobile")],
-                emails: [],
-                structuredName: StructuredName(
-                    displayName: e["name"]!,
-                    namePrefix: "",
-                    givenName: "",
-                    middleName: "",
-                    familyName: "",
-                    nameSuffix: ""),
-                organization: const Organization(
-                    company: "", department: "", jobDescription: "")),
-          )
-          .toList();
-      List<ContactModel> contacts = await ContactModel.empty()
-          .getFromContacts(contacts: rawContacts, getIsAppUser: true);
-      return contacts;
-    } else {
-      return null;
-    }
   }
 }

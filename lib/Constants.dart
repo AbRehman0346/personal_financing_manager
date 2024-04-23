@@ -1,13 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'models/user_data_model.dart';
 
-class UserRoles {
-  static String admin = "admin";
-  String student = "student";
-  String teacher = "teacher";
-}
+// class UserRoles {
+//   static String admin = "admin";
+//   String student = "student";
+//   String teacher = "teacher";
+// }
 
 
 class CustomDialogs {
@@ -37,7 +38,7 @@ class CustomDialogs {
     );
   }
 
-  void showProgressBar(BuildContext context) {
+  void showAndroidProgressBar(BuildContext context) {
     showDialog(
       barrierDismissible: false,
       context: context,
@@ -46,7 +47,20 @@ class CustomDialogs {
         content: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           CircularProgressIndicator(
             color: Colors.black,
-          )
+          ),
+        ]),
+      ),
+    );
+  }
+
+  void showIOsProgressBar(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (_) => const AlertDialog(
+        backgroundColor: Colors.transparent,
+        content: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          CupertinoActivityIndicator(),
         ]),
       ),
     );
@@ -171,7 +185,7 @@ class CustomDialogs {
           TextButton(
             onPressed: () {
               try {
-                CustomDialogs().showProgressBar(context);
+                CustomDialogs().showAndroidProgressBar(context);
                 primaryButtonOnPressed();
                 Navigator.pop(context);
                 Navigator.pop(context);
@@ -227,4 +241,5 @@ class ProjectPaths {
   static const String front = "assets/svg/front.html";
   static const String bigFront = "assets/svg/big_front.svg";
   static const String profilePlaceholderImage = "assets/images/profileplaceholder.png";
+  static const String tripDefaultImage = "assets/images/tips_defualt_image.jpg";
 }

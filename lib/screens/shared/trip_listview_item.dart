@@ -4,21 +4,25 @@
 * Trip Screen
 * */
 
+import 'package:expense_tracking/models/trip_model.dart';
+import 'package:expense_tracking/screens/shared/display_image.dart';
+import 'package:expense_tracking/utils/HandleDatetime.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import '../../Constants.dart';
+import '../../utils/general_services.dart';
 
 class TripListViewItem {
-  ListTile build(BuildContext context, int index) {
+  ListTile build(BuildContext context, Trip trip) {
     return ListTile(
       leading: ClipOval(
         child: CircleAvatar(
-          child: Image.asset(
-            "assets/images/paris.jpg",
-            fit: BoxFit.cover,
-          ),
+          child: DisplayImage.display(context: context, url: trip.image, defaultImage: ProjectPaths.tripDefaultImage),
         ),
       ),
       title: Text(
-        "Trip to Paris ${index + 1}",
+        trip.tripName,
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       subtitle: Row(
@@ -28,16 +32,16 @@ class TripListViewItem {
             color: Colors.grey,
           ),
           Text(
-            " 6 Persons | ",
+            " ${trip.participants.length} Persons | ",
             style: TextStyle(color: Colors.grey.shade900),
           ),
-          Icon(
+          const Icon(
             Icons.calendar_today,
             size: 18,
             color: Colors.grey,
           ),
           Text(
-            " October 20",
+            " ${HandleDatetime.formatDateTime(trip.tripStarts, format: "MMMM-dd")}",
             style: TextStyle(color: Colors.grey.shade900),
           )
           // Text("|"),

@@ -7,10 +7,9 @@ class UserModel{
   String accountId;
   String name;
   String phone;
-  String role;
-  String access;
+  String? image;
 
-  UserModel({required this.name, required this.phone, required this.role, required this.accountId, required this.access});
+  UserModel({this.image, required this.name, required this.phone, required this.accountId});
 
   factory UserModel.fromDocumentSnapshot(DocumentSnapshot snap){
     SignUpUserModelFields fields = SignUpUserModelFields();
@@ -18,14 +17,7 @@ class UserModel{
         accountId: snap.id,
         name: snap.get(fields.nameField),
         phone: snap.get(fields.phoneField),
-        role: snap.get(fields.roleField),
-        access: snap.get(fields.accessField),
+        image: snap.get(fields.profileImage),
     );
   }
-
-  bool get isAdmin => role == UserRoles.admin;
-
-  bool get isAccessAllowed => access == AccessControl.allowed;
-
-  bool get isAccessDenied => access == AccessControl.denied;
 }

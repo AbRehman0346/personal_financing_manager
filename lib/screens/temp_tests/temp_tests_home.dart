@@ -1,6 +1,10 @@
+import 'dart:developer';
+
+import 'package:expense_tracking/route_generator.dart';
 import 'package:expense_tracking/screens/temp_tests/test_route_generator.dart';
 import 'package:expense_tracking/services/auth.dart';
 import 'package:expense_tracking/services/firestore/firestore_auth.dart';
+import 'package:expense_tracking/utils/general_services.dart';
 import 'package:flutter/material.dart';
 
 class TempTestsHome extends StatefulWidget {
@@ -17,7 +21,7 @@ class _TempTestsHomeState extends State<TempTestsHome> {
       appBar: AppBar(title: const Text("Test Screen"),
       actions: [
         TextButton(onPressed: (){
-          FirestoreAuth().isAppUser("+9230637635868");
+          log(GeneralServices().getIdFromPhone("+92 303 3372287"));
         }
             , child:Text("Tap to Test"))
       ],
@@ -46,8 +50,9 @@ class _TempTestsHomeState extends State<TempTestsHome> {
         Navigator.push(context, TestRouteGenerator.testGenerateRoute(const RouteSettings(name: TestRoutes.testContactScreen)));
   }
 
-  void signoutHandler(){
-    Auth().signout();
+  void signoutHandler() async {
+    await Auth().signout();
+    Navigator.pushAndRemoveUntil(context, RouteGenerator.generateRoute(RouteSettings(name: Routes.signin_signup)), (route) => false);
   }
 
   void getFastContactsHandler(){

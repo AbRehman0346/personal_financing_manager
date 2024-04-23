@@ -1,8 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:developer';
+
 import 'package:expense_tracking/Constants.dart';
-import 'package:expense_tracking/models/user_data_model.dart';
+import 'package:expense_tracking/route_generator.dart';
 import 'package:expense_tracking/screens/home.dart';
 import 'package:expense_tracking/screens/login_signup.dart';
+import 'package:expense_tracking/screens/splash_screen.dart';
 import 'package:expense_tracking/services/firestore/firestore_auth.dart';
 import 'package:expense_tracking/services/services_helper_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,18 +33,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: StreamBuilder(stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (_, AsyncSnapshot snap){
-        if (snap.hasData){
-          User user = snap.data;
-          FirestoreAuth().getUserData(
-              ServicesHelperFunction().convertEmailToPhone(user.email!))
-              .then((value) => ProjectData.user = value);
-          return const Home();
-        }else{
-          return const LoginSignup();
-        }
-      }),
+      home: const SplashScreen(),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:expense_tracking/models/trip_model.dart';
 import 'package:expense_tracking/screens/create_trip_screen.dart';
 import 'package:expense_tracking/screens/home.dart';
 import 'package:expense_tracking/screens/login_signup.dart';
@@ -27,7 +28,7 @@ class RouteGenerator {
       case Routes.createTrip:
         return MaterialPageRoute(builder: (_) => CreateTripScreen());
       case Routes.tripDetails:
-        return MaterialPageRoute(builder: (_) => const TripDetails());
+        return MaterialPageRoute(builder: (_) => TripDetails(trip: args as Trip,));
       case Routes.signin_signup:
         return MaterialPageRoute(builder: (_) => const LoginSignup());
       case Routes.testScreen:

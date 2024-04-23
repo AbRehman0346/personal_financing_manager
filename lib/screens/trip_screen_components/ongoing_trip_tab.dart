@@ -1,11 +1,16 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracking/Constants.dart';
 import 'package:expense_tracking/models/trip_model.dart';
-import 'package:expense_tracking/services/general_services.dart';
+import 'package:expense_tracking/utils/general_services.dart';
+import 'package:expense_tracking/services/storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/HandleDatetime.dart';
+import '../shared/display_image.dart';
 
 class OngoingTripTab extends StatefulWidget {
   final List<DocumentSnapshot> docs;
@@ -28,7 +33,7 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
   }
 
   Widget _card(DocumentSnapshot doc) {
-    TripModel trip = TripModel.fromDocumentSnapshot(doc);
+    Trip trip = Trip.fromDocumentSnapshot(doc);
     double paddingOfImages = -30;
     Color color = Colors.grey.shade700;
     return Container(
@@ -41,18 +46,14 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-            child: Image.network(
-              trip.image,
-              height: 200,
-              width: MediaQuery.of(context).size.width,
-              fit: BoxFit.cover,
-            ),
-
-            // Image.asset(
-            //   "assets/images/Pakistan_scene.jpg",
-            // ),
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+              child: DisplayImage.display(
+                  context: context,
+                  url: trip.image,
+                  defaultImage: ProjectPaths.tripDefaultImage,
+                height: 200,
+              ),
           ),
           Padding(
             padding: const EdgeInsets.only(left: 10, top: 10),
@@ -62,7 +63,8 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
                 // Trip Tite.
                 Text(
                   trip.tripName,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
 
                 // Number of persons and date.
@@ -81,7 +83,8 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
                       size: 15,
                       color: color,
                     ),
-                    Text(GeneralServices().formatDateTime(trip.tripStarts), style: TextStyle(color: color)),
+                    Text(HandleDatetime.formatDateTime(trip.tripStarts),
+                        style: TextStyle(color: color)),
                   ],
                 ),
                 const SizedBox(
@@ -90,7 +93,11 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
 
                 // Pictures...
                 Stack(
-                  children: List.generate(trip.participants.length > 5 ? 5 : trip.participants.length, (index) {
+                  children: List.generate(
+                      trip.participants.length > 5
+                          ? 5
+                          : trip.participants.length, (index) {
+                    String phone = trip.participants[index];
                     paddingOfImages += 30;
                     return Container(
                       padding: EdgeInsets.only(left: paddingOfImages),
@@ -101,19 +108,53 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
                         ),
                         child: ClipOval(
                           child: CircleAvatar(
-                            child: FutureBuilder(future: null, builder: (context, AsyncSnapshot snap){
-                              if (snap.hasData){
+                            child: FutureBuilder(
+                                future:
+                                    Storage().getProfileImageFromPhone(phone),
+                                builder: (context, AsyncSnapshot snap) {
+                                  if (snap.hasData) {
+                                    if (snap.data == "") {
+                                      return Image.asset(
+                                        ProjectPaths.profilePlaceholderImage,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        fit: BoxFit.cover,
+                                      );
+                                    }
+                                    return CachedNetworkImage(
+                                        imageUrl: snap.data,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        fit: BoxFit.cover,
+                                        placeholder: (_, __) =>
+                                            const CupertinoActivityIndicator(),
+                                        errorWidget: (_, __, ___) {
+                                          return Image.asset(
+                                            ProjectPaths
+                                                .profilePlaceholderImage,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: MediaQuery.of(context)
+                                                .size
+                                                .height,
+                                            fit: BoxFit.cover,
+                                          );
+                                        });
 
-                              }else{
-                                return const CupertinoActivityIndicator();
-                              }
-                              return Image.asset(
-                                "assets/images/me.jpg",
-                                fit: BoxFit.cover,
-                                width: double.maxFinite,
-                                height: double.maxFinite,
-                              );
-                            }),
+                                    //   Image.network(snap.data,
+                                    // width: MediaQuery.of(context).size.width,
+                                    //   height: MediaQuery.of(context).size.height,
+                                    //   fit: BoxFit.cover,
+                                    // );
+                                  } else {
+                                    return const CupertinoActivityIndicator();
+                                  }
+                                }),
                           ),
                         ),
                       ),

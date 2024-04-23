@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expense_tracking/models/trip_model.dart';
 import 'package:expense_tracking/screens/shared/cappbar.dart';
 import 'package:expense_tracking/screens/shared/footer.dart';
 import 'package:expense_tracking/screens/shared/new_trip_floating_button.dart';

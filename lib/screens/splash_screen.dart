@@ -1,8 +1,74 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:expense_tracking/Constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class SplashScreen extends StatelessWidget {
+import '../route_generator.dart';
+import '../services/firestore/firestore_auth.dart';
+import '../services/services_helper_functions.dart';
+import 'home.dart';
+import 'login_signup.dart';
+
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 2), (){
+      FirebaseAuth.instance.authStateChanges().listen((data) {
+        if (data == null){
+          Navigator.pushAndRemoveUntil(
+            context,
+            RouteGenerator.generateRoute(
+              const RouteSettings(name: Routes.signin_signup),
+            ),
+                (route) => false,
+          );
+        }
+
+        User user = data!;
+        FirestoreAuth().getUserData(
+            ServicesHelperFunction().convertEmailToPhone(user.email!))
+            .then((value) => ProjectData.user = value).catchError((e){
+          log("Exception-Main: $e");
+          // navigating to signup and signin
+          Navigator.pushAndRemoveUntil(context, RouteGenerator.generateRoute(const RouteSettings(name: Routes.signin_signup)), (route) => false);
+        });
+        // navigating to home
+        Navigator.pushAndRemoveUntil(context, RouteGenerator.generateRoute(const RouteSettings(name: Routes.homeScreen)), (route) => false);
+      });
+
+
+      // StreamBuilder(stream: FirebaseAuth.instance.authStateChanges(),
+      //     builder: (_, AsyncSnapshot snap){
+      //       if (snap.hasData){
+      //         User user = snap.data;
+      //         FirestoreAuth().getUserData(
+      //             ServicesHelperFunction().convertEmailToPhone(user.email!))
+      //             .then((value) => ProjectData.user = value).catchError((e){
+      //           log("Exception-Main: $e");
+      //           Navigator.pushAndRemoveUntil(context, RouteGenerator.generateRoute(const RouteSettings(name: Routes.signin_signup)), (route) => false);
+      //         });
+      //         Navigator.pushAndRemoveUntil(context, RouteGenerator.generateRoute(const RouteSettings(name: Routes.homeScreen)), (route) => false);
+      //         // return const Home();
+      //       }else{
+      //         Navigator.pushAndRemoveUntil(context, RouteGenerator.generateRoute(const RouteSettings(name: Routes.signin_signup)), (route) => false);
+      //         // return const LoginSignup();
+      //       }
+      //     });
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +109,10 @@ class SplashScreen extends StatelessWidget {
             color: Colors.white, letterSpacing: 1, fontWeight: FontWeight.bold),
       ),
     );
+
+
+
+
     return Scaffold(
       body: Stack(
         children: [

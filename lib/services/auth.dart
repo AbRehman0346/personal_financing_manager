@@ -15,9 +15,7 @@ class Auth{
 
   Future<UserModel> signIn(String phone, String password) async {
     UserModel model = await FirestoreAuth().getUserData(phone);
-    if (model.isAccessAllowed) {
-      await auth.signInWithEmailAndPassword(email: ServicesHelperFunction().convertPhoneToEmail(phone), password: password);
-    }
+    await auth.signInWithEmailAndPassword(email: ServicesHelperFunction().convertPhoneToEmail(phone), password: password);
     ProjectData.user = model;
     return model;
   }
