@@ -3,16 +3,21 @@ import 'package:expense_tracking/AppConfigs.dart';
 import 'package:expense_tracking/Constants.dart';
 import 'package:expense_tracking/models/trip_model.dart';
 import 'package:expense_tracking/screens/shared/display_image.dart';
+import 'package:expense_tracking/screens/trip_details_components/ShowFinalResultsDialog.dart';
 import 'package:expense_tracking/screens/trip_details_components/add_payment_dialog.dart';
+import 'package:expense_tracking/screens/trip_details_components/calc_TotalAmountSpentByEachPerson.dart';
+import 'package:expense_tracking/screens/trip_details_components/calc_trip_details_final_result.dart';
 import 'package:expense_tracking/screens/trip_details_components/trip_details_balance_details.dart';
 import 'package:expense_tracking/utils/HandleDatetime.dart';
 import 'package:expense_tracking/utils/general_services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../models/contact_model.dart';
 import '../services/firestore/firestore.dart';
 
 class TripDetails extends StatefulWidget {
@@ -25,6 +30,7 @@ class TripDetails extends StatefulWidget {
 
 class _TripDetailsState extends State<TripDetails> {
   late Trip trip;
+  List<int> _expandedPaymentDetails = [];
 
   @override
   void initState() {
@@ -37,6 +43,8 @@ class _TripDetailsState extends State<TripDetails> {
     Color heroChildrenColor = Colors.white;
     var generalServices = GeneralServices();
     var balancedetails = TripDetails_BalanceDetailsComponent(payments: trip.payments, totalBalance: 1000, participants: trip.participants);
+    double tripTotalExpense = trip.calcTripTotalExpense();
+
     return Scaffold(
       backgroundColor: ProjectColors.bg,
       appBar: AppBar(
@@ -193,7 +201,7 @@ class _TripDetailsState extends State<TripDetails> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Text(
-                                "${AppConfigs.getCurrencySignBeforeAmount} ${trip.getTotalExpense()} ${AppConfigs.getCurrencySignAfterAmount}",
+                                "${AppConfigs.getCurrencySignBeforeAmount} ${tripTotalExpense} ${AppConfigs.getCurrencySignAfterAmount}",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: ProjectColors.primaryColor,
@@ -236,7 +244,7 @@ class _TripDetailsState extends State<TripDetails> {
                           ),
                           // Money
                           Text(
-                            "${AppConfigs.getCurrencySignBeforeAmount} ${balancedetails.totalBalanceLeftInPocket} ${AppConfigs.getCurrencySignAfterAmount}",
+                            "${AppConfigs.getCurrencySignBeforeAmount} ${balancedetails.totalBalanceLeftInPocket}",
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w900,
@@ -307,16 +315,45 @@ class _TripDetailsState extends State<TripDetails> {
                   ),
 
                   // Contribute Button
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.75,
-                    padding: const EdgeInsets.all(8),
-                    margin: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      color: const Color.fromRGBO(255, 249, 213, 1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Center(
-                      child: Text("Contribute to Continue this Trip"),
+                  GestureDetector(
+                    onTap: ()async{
+                      var finalResults = CalcTripFinalResult().calc(totalSpent: tripTotalExpense, trip: trip);
+                      log("Total Expense: $tripTotalExpense");
+                      for(var result in finalResults){
+                        ContactModel? contact = await generalServices.getContactFromNumber(result.number);
+                        log("Name: ${contact?.name ?? "unknown"}");
+                        log("Invested: ${result.invested.toStringAsFixed(2)}   |");
+                        log("Debt: ${result.debt.toStringAsFixed(2)}\n");
+                      }
+
+
+                      showDialog(
+                          context: context,
+                          builder: (_)=> SimpleDialog(
+                            backgroundColor: Colors.white,
+                            surfaceTintColor: Colors.white,
+                            children: [
+                              ShowFinalResultsDialog(result: finalResults)
+                            ],
+                          )
+                      );
+
+
+                      // Navigator.push(context, MaterialPageRoute(builder: (_)=>ShowFinalResultsDialog(result: finalResults,)));
+
+
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      padding: const EdgeInsets.all(8),
+                      margin: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: const Color.fromRGBO(255, 249, 213, 1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Center(
+                        child: Text("CHECK FINAL RESULT", style: TextStyle(fontWeight: FontWeight.bold),),
+                      ),
                     ),
                   ),
                 ],
@@ -380,35 +417,62 @@ class _TripDetailsState extends State<TripDetails> {
                       shrinkWrap: true,
                       itemCount: trip.payments.length,
                       itemBuilder: (BuildContext context, int index) {
+                        bool isExpanded = _expandedPaymentDetails.contains(index);
                         TripPayment payment = trip.payments[index];
-                        return ListTile(
-                          leading: CircleAvatar(
-                            child: ClipOval(
-                              child: DisplayImage.display(context: context, url: trip.image)
-                              ,),
-                          ),
-                          title: Text(
-                            payment.spentAt,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: FutureBuilder(future: generalServices.getContactFromNumber(payment.payer, returnSameIfNotFound: true), builder: (_, snap){
-                            if(snap.hasData){
-                              return Text(
-                                "Paid By ${snap.data!.name}",
-                                style: TextStyle(color: Colors.grey.shade600),
-                                overflow: TextOverflow.ellipsis,
-                              );
-                            }else{
-                              return const Text("Loading...", style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),);
-                            }
-                          }),
-                          // Amount
-                          trailing: Text(
-                            "${AppConfigs.getCurrencySignBeforeAmount} ${payment.amount}",
-                            style: const TextStyle(
-                                fontSize: 18,
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold),
+                        return GestureDetector(
+                          onTap: (){
+                            setState(() {
+                              if(isExpanded){
+                                _expandedPaymentDetails.remove(index);
+                              }else{
+                                _expandedPaymentDetails.add(index);
+                              }
+                            });
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ListTile(
+                                leading: CircleAvatar(
+                                  child: ClipOval(
+                                    child: DisplayImage.display(context: context, url: trip.image)
+                                    ,),
+                                ),
+                                title: Text(
+                                  payment.spentAt,
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: FutureBuilder(future: generalServices.getContactFromNumber(payment.payerNumber, returnSameIfNotFound: true), builder: (_, snap){
+                                  if(snap.hasData){
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Paid By ${snap.data!.name}",
+                                          style: TextStyle(color: Colors.grey.shade600),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        isExpanded ? Text(HandleDatetime.formatDateTime(DateTime.fromMillisecondsSinceEpoch(int.parse(payment.epoch)).toString()), style: TextStyle(color: Colors.grey),) : SizedBox.shrink(),
+                                      ],
+                                    );
+                                  }else{
+                                    return const Text("Loading...", style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.bold),);
+                                  }
+                                }),
+                                // Amount
+                                trailing: Text(
+                                  "${AppConfigs.getCurrencySignBeforeAmount} ${payment.amount}",
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              isExpanded ? Padding(
+                                padding: EdgeInsets.only(left: 70, bottom: 10),
+                                child: Text(payment.msg, style: TextStyle(color: Colors.grey),),
+                              ):SizedBox.shrink(),
+                            ],
                           ),
                         );
                       }

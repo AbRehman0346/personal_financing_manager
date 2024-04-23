@@ -25,8 +25,6 @@ class Trip {
   String? endDate;
   List<TripPayment> payments;
 
-  int _totalExpense = 0;
-
   Trip({
     this.tripId,
     required this.tripName,
@@ -38,12 +36,12 @@ class Trip {
     this.endDate,
   });
 
-  int getTotalExpense({bool calculatefresh = false}){
-    if(_totalExpense != 0 && !calculatefresh) return _totalExpense;
+  double calcTripTotalExpense(){
+    double totalExpense = 0;
     for (TripPayment payment in payments){
-      _totalExpense += payment.amount;
+      totalExpense += payment.amount;
     }
-    return _totalExpense;
+    return totalExpense;
   }
 
   factory Trip.fromDocumentSnapshot(DocumentSnapshot snap) {
@@ -61,8 +59,8 @@ class Trip {
       payments.add(
           TripPayment(
               spentAt: item[fields.spendAt],
-              amount: item[fields.amount],
-              payer: item[fields.payer],
+              amount: double.parse(item[fields.amount].toString()),
+              payerNumber: item[fields.payer],
               epoch: item[fields.epoch],
               msg: item[fields.msg],
           )
@@ -103,18 +101,18 @@ class _TripPaymentFields{
 
 class TripPayment{
   String spentAt;
-  int amount;
-  String payer;
+  double amount;
+  String payerNumber;
   String epoch;
   String msg;
-  TripPayment({required this.spentAt, required this.amount, required this.payer, required this.epoch, required this.msg});
+  TripPayment({required this.spentAt, required this.amount, required this.payerNumber, required this.epoch, required this.msg});
 
   Map<String, dynamic> toMap(){
     _TripPaymentFields f = _TripPaymentFields();
     return {
       f.spendAt: spentAt,
       f.amount: amount,
-      f.payer: payer,
+      f.payer: payerNumber,
       f.epoch: epoch,
       f.msg: msg,
     };

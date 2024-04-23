@@ -31,7 +31,6 @@ class GeneralServices{
       }else{
         throw Exception("Contact Permission Denied");
       }
-
     }
     for (ContactModel contact in contacts){
         if (number == getIdFromPhone(contact.number)){

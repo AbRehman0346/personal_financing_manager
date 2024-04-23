@@ -82,7 +82,7 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
               CustomDialogs().showAndroidProgressBar(context);
 
               String spentAt = spentAtValue;
-              int? amount = int.tryParse(amountCont.text);
+              double? amount = double.tryParse(amountCont.text);
               String payer = ProjectData.user!.phone;
               String epoch = DateTime.now().millisecondsSinceEpoch.toString();
               String msg = msgCont.text;
@@ -94,7 +94,7 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
                 return;
               }
 
-              var payment = TripPayment(spentAt: spentAt, amount: amount, payer: payer, epoch: epoch, msg: msg);
+              var payment = TripPayment(spentAt: spentAt, amount: amount, payerNumber: payer, epoch: epoch, msg: msg);
               if (widget.trip.tripId == null){
                 Navigator.pop(context);
                 throw Exception("Unexpected Error\nCan't find user data.");
