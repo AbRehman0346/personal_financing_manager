@@ -1,10 +1,13 @@
+import 'package:expense_tracking/screens/home_screen_components/calc_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../AppConfigs.dart';
 import '../../Constants.dart';
 
 class MiddleCards extends StatelessWidget {
-  const MiddleCards({super.key});
+  final CalcHomePageDataResponse data;
+  const MiddleCards({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +44,11 @@ class MiddleCards extends StatelessWidget {
               // My Share and Price TExt
               Container(
                 padding: const EdgeInsets.all(10),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // My Share Text
-                    Text(
+                    const Text(
                       "My Share",
                       style: TextStyle(
                           fontSize: 22, fontWeight: FontWeight.bold),
@@ -53,8 +56,8 @@ class MiddleCards extends StatelessWidget {
 
                     // Price
                     Text(
-                      "\$ 500.00",
-                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                      "${AppConfigs.getCurrencySignBeforeAmount} ${data.share}",
+                      style: const TextStyle(fontSize: 18, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -95,18 +98,18 @@ class MiddleCards extends StatelessWidget {
                     // I Paid and Price Text
                     Container(
                       padding: const EdgeInsets.all(10),
-                      child: const Column(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             "I Paid",
                             style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            "\$ 300.00",
-                            style: TextStyle(
+                            "${AppConfigs.getCurrencySignBeforeAmount} ${data.ipaid}",
+                            style: const TextStyle(
                                 fontSize: 18, color: Colors.grey),
                           ),
                         ],
@@ -135,11 +138,11 @@ class MiddleCards extends StatelessWidget {
                     // I Owed and Price Text
                     Container(
                       padding: const EdgeInsets.all(10),
-                      child: const Column(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // I Owed Text
-                          Text(
+                         const  Text(
                             "I Owed",
                             style: TextStyle(
                                 fontSize: 22,
@@ -148,9 +151,9 @@ class MiddleCards extends StatelessWidget {
 
                           // Price
                           Text(
-                            "\$ 200.00",
+                            "${AppConfigs.getCurrencySignBeforeAmount} ${data.owe}",
                             style: TextStyle(
-                                fontSize: 18, color: Colors.green),
+                                fontSize: 18, color: double.parse(data.owe).isNegative ? Colors.red : Colors.green),
                           ),
                         ],
                       ),

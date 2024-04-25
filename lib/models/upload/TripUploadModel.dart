@@ -8,6 +8,7 @@ class TripUploadModel{
   List<String> participants;
   String owner;
   Uint8List? image;
+  String estimatedBudget;
 
 
   TripUploadModel({
@@ -15,6 +16,7 @@ class TripUploadModel{
     required this.tripName,
     required this.owner,
     required this.participants,
+    required this.estimatedBudget,
     this.image,
   });
 
@@ -30,6 +32,7 @@ class TripUploadModel{
       f.paymentField: [],
       f.endDateField: null,
       f.owner: owner,
+      f.estimatedBudget: estimatedBudget,
     };
   }
 }

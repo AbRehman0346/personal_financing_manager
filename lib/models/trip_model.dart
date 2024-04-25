@@ -13,6 +13,7 @@ class TripModelFields {
 String owner = "owner";
   String endDateField = "end_date";
   String paymentField = "payments";
+  String estimatedBudget = "budget";
 }
 
 class Trip {
@@ -24,6 +25,7 @@ class Trip {
   String tripStarts;
   String? endDate;
   List<TripPayment> payments;
+  double budget;
 
   Trip({
     this.tripId,
@@ -33,6 +35,7 @@ class Trip {
     required this.participants,
     required this.tripStarts,
     required this.payments,
+    required this.budget,
     this.endDate,
   });
 
@@ -76,6 +79,7 @@ class Trip {
       payments: payments,
       endDate: snap.get(f.endDateField),
       owner: snap.get(f.owner),
+      budget: double.tryParse(snap.get(f.estimatedBudget)) ?? 0,
     );
   }
 

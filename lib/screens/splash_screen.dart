@@ -37,6 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
         }
 
         User user = data!;
+        ProjectData.authuser = user;
         FirestoreAuth().getUserData(
             ServicesHelperFunction().convertEmailToPhone(user.email!))
             .then((value) => ProjectData.user = value).catchError((e){
@@ -47,25 +48,6 @@ class _SplashScreenState extends State<SplashScreen> {
         // navigating to home
         Navigator.pushAndRemoveUntil(context, RouteGenerator.generateRoute(const RouteSettings(name: Routes.homeScreen)), (route) => false);
       });
-
-
-      // StreamBuilder(stream: FirebaseAuth.instance.authStateChanges(),
-      //     builder: (_, AsyncSnapshot snap){
-      //       if (snap.hasData){
-      //         User user = snap.data;
-      //         FirestoreAuth().getUserData(
-      //             ServicesHelperFunction().convertEmailToPhone(user.email!))
-      //             .then((value) => ProjectData.user = value).catchError((e){
-      //           log("Exception-Main: $e");
-      //           Navigator.pushAndRemoveUntil(context, RouteGenerator.generateRoute(const RouteSettings(name: Routes.signin_signup)), (route) => false);
-      //         });
-      //         Navigator.pushAndRemoveUntil(context, RouteGenerator.generateRoute(const RouteSettings(name: Routes.homeScreen)), (route) => false);
-      //         // return const Home();
-      //       }else{
-      //         Navigator.pushAndRemoveUntil(context, RouteGenerator.generateRoute(const RouteSettings(name: Routes.signin_signup)), (route) => false);
-      //         // return const LoginSignup();
-      //       }
-      //     });
     });
   }
 

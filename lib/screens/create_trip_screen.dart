@@ -16,6 +16,7 @@ import 'package:image_picker/image_picker.dart';
 import '../Constants.dart';
 import '../models/contact_model.dart';
 import '../models/upload/TripUploadModel.dart';
+import '../widgets/xtextfield.dart';
 
 class CreateTripScreen extends StatefulWidget {
   CreateTripScreen({super.key});
@@ -29,6 +30,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
   // List<ContactModel> addedContacts = [];
   List<String> addedContactNumbers = [];
   TextEditingController tripNameController = TextEditingController();
+  TextEditingController estimatedBudgetController = TextEditingController();
   GeneralServices gservice = GeneralServices();
 
   @override
@@ -43,113 +45,12 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
       actions: [
         TextButton(
             onPressed: () async {
-
-                String? url = await Storage().getProfileImageFromPhone("9234689423920");
-                log("Here is URL: $url");
-
+              String? url =
+                  await Storage().getProfileImageFromPhone("9234689423920");
+              log("Here is URL: $url");
             },
             child: const Text("Test"))
       ],
-    );
-
-    Widget imageAndUploadImageText = Center(
-      child: Column(
-        children: [
-          ClipOval(
-            child: GestureDetector(
-              onTap: selectImage,
-              child: CircleAvatar(
-                radius: 60,
-                child: file == null
-                    ? Image.asset(
-                        "assets/images/profileplaceholder.png",
-                        width: double.maxFinite,
-                        height: double.maxFinite,
-                        fit: BoxFit.cover,
-                      )
-                    : Image.memory(
-                        file!,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                      ),
-              ),
-            ),
-          ),
-          const Text(
-            "Upload Image",
-            style: TextStyle(fontSize: 18),
-          )
-        ],
-      ),
-    );
-
-    // Participants contains: Trip Name Text Field and Participants with Add Member Button
-    Widget participants = Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Trip Name Text...
-          Text(
-            "Trip Name",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-
-          // Trip Name TextField...
-          TextField(
-            controller: tripNameController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: "Enter Trip Name",
-            ),
-          ),
-
-          SizedBox(height: 30),
-
-          // Perticipants.
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Row(
-                children: [
-                  Text(
-                    "Participants ",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "(3 Persons)",
-                    // style: TextStyle(color: Colors.grey.shade700),
-                  ),
-                ],
-              ),
-              TextButton(
-                onPressed: null,
-                child: Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: ProjectColors.shadow,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.add,
-                        size: 15,
-                        color: Colors.black,
-                      ),
-                      SizedBox(width: 3),
-                      Text(
-                        "Add Member",
-                        style: TextStyle(fontSize: 12, color: Colors.black),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          )
-        ],
-      ),
     );
 
     Widget createTripButton = Container(
@@ -215,17 +116,20 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                 );
               }
 
-              void addRemoveContactActionHandler(ContactModel contact, bool action){
-                    // in action, true means add and false means remove.
-                    setState(() {
-                      if (action){
-                        // addedContacts.add(contact);
-                        addedContactNumbers.add(gservice.getIdFromPhone(contact.number));
-                      }else{
-                        addedContactNumbers.remove(gservice.getIdFromPhone(contact.number));
-                        // addedContacts.removeAt(index);
-                      }
-                    });
+              void addRemoveContactActionHandler(
+                  ContactModel contact, bool action) {
+                // in action, true means add and false means remove.
+                setState(() {
+                  if (action) {
+                    // addedContacts.add(contact);
+                    addedContactNumbers
+                        .add(gservice.getIdFromPhone(contact.number));
+                  } else {
+                    addedContactNumbers
+                        .remove(gservice.getIdFromPhone(contact.number));
+                    // addedContacts.removeAt(index);
+                  }
+                });
               }
 
               return Expanded(
@@ -233,7 +137,8 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                   itemCount: contacts.length,
                   itemBuilder: (BuildContext context, int index) {
                     ContactModel contact = contacts[index];
-                    bool isAdded = addedContactNumbers.contains(gservice.getIdFromPhone(contact.number));
+                    bool isAdded = addedContactNumbers
+                        .contains(gservice.getIdFromPhone(contact.number));
                     return Column(
                       children: [
                         ListTile(
@@ -296,26 +201,32 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
                                       : contact.isuser!
                                           // Add
                                           ? GestureDetector(
-                                onTap: () => addRemoveContactActionHandler(contact, !isAdded),
-                                            child: Container(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10,
-                                                    right: 10,
-                                                    top: 5,
-                                                    bottom: 5),
-                                                decoration: BoxDecoration(
-                                                  color: isAdded ? Colors.blue : Colors.black,
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                ),
-                                                child: Text(
-                                                  isAdded ? "Added":"Add",
-                                                  style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                )),
-                                          )
+                                              onTap: () =>
+                                                  addRemoveContactActionHandler(
+                                                      contact, !isAdded),
+                                              child: Container(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 10,
+                                                          right: 10,
+                                                          top: 5,
+                                                          bottom: 5),
+                                                  decoration: BoxDecoration(
+                                                    color: isAdded
+                                                        ? Colors.blue
+                                                        : Colors.black,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                  ),
+                                                  child: Text(
+                                                    isAdded ? "Added" : "Add",
+                                                    style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  )),
+                                            )
                                           // Invite
                                           : Container(
                                               padding: const EdgeInsets.only(
@@ -364,11 +275,136 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
             appbar,
             const SizedBox(height: 20),
 
-            // Image and Upload Image Text.
-            imageAndUploadImageText,
+            // Image TripName, Estimated Budget.
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Image Column
+                Column(
+                  children: [
+                    const SizedBox(height: 15),
+                    ClipOval(
+                      child: GestureDetector(
+                        onTap: selectImage,
+                        child: CircleAvatar(
+                          radius: 30,
+                          child: file == null
+                              ? Image.asset(
+                                  ProjectPaths.profilePlaceholderImage,
+                                  width: double.maxFinite,
+                                  height: double.maxFinite,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.memory(
+                                  file!,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                ),
+                        ),
+                      ),
+                    ),
+                    // const Text(
+                    //   "Browse",
+                    //   style: TextStyle(fontSize: 18),
+                    // )
+                  ],
+                ),
 
-            // Trip Name Text Field and Participants with Add Member Button
-            participants,
+                // Enter Name and Estimated budget Column
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Trip Name Text...
+                    const Text(
+                      "Trip Name",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+
+                    // Trip Name TextField...
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      child: XTextField(
+                        controller: tripNameController,
+                        hint: "Trip Name",
+                        fontSize: 17,
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    const Text("Your Estimated Budget"
+                    ,style: TextStyle(fontWeight: FontWeight.bold),
+
+                    ),
+
+
+                    SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        child: XTextField(
+                          controller: estimatedBudgetController,
+                          keyboardType: TextInputType.number,
+                          hint: "Estimated Budget",
+                          fontSize: 17,
+                        ),
+                    )
+
+                  ]
+                )
+              ],
+            ),
+
+            //Trip Name Text Field and Participants with Add Member Button
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 30),
+
+            // Perticipants.
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      "Participants ",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "(${addedContactNumbers.length} Persons Added)",
+                      // style: TextStyle(color: Colors.grey.shade700),
+                    ),
+                  ],
+                ),
+                // TextButton(
+                //   onPressed: null,
+                //   child: Container(
+                //     padding: const EdgeInsets.all(5),
+                //     decoration: BoxDecoration(
+                //       color: ProjectColors.shadow,
+                //       borderRadius: BorderRadius.circular(20),
+                //     ),
+                //     child: const Row(
+                //       children: [
+                //         Icon(
+                //           Icons.add,
+                //           size: 15,
+                //           color: Colors.black,
+                //         ),
+                //         SizedBox(width: 3),
+                //         Text(
+                //           "Add Member",
+                //           style: TextStyle(fontSize: 12, color: Colors.black),
+                //         )
+                //       ],
+                //     ),
+                //   ),
+                // ),
+              ],
+            ),
+          ],
+        ),
+      ),
 
             // List of Participants
             listOfParticipants(),
@@ -381,7 +417,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
     );
   }
 
-  void createTrip()async {
+  void createTrip() async {
     CustomDialogs dialogs = CustomDialogs();
     dialogs.showAndroidProgressBar(context);
 
@@ -389,9 +425,10 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
     Uint8List? file = this.file;
     String name = tripNameController.text;
     List<String> participants = addedContactNumbers;
+    String estimatedBudget = estimatedBudgetController.text == "" ? "0" : estimatedBudgetController.text;
     String? error;
 
-    if (ProjectData.user == null){
+    if (ProjectData.user == null) {
       String msg = "An Unexpected error occured: Can't find user data";
       CustomDialogs().showDangerMessage(context, msg);
       return;
@@ -401,38 +438,42 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
     participants.add(owner);
 
     //Validation
-    if (name == ""){
+    if (name == "") {
       error = "Provide Trip Name";
-    }else if (participants.isEmpty){
+    } else if (participants.isEmpty) {
       error = "Add at least one participant";
     }
 
-    if (error != null){
+    if (error != null) {
       CustomDialogs().showWarningMessage(context, error);
       Navigator.pop(context);
       return;
     }
 
-
-
     // Creating Trip
-    TripUploadModel trip = TripUploadModel(tripName: name, image: file, participants: participants, owner: owner);
-    try{
+    TripUploadModel trip = TripUploadModel(
+        tripName: name,
+        image: file,
+        participants: participants,
+        owner: owner,
+        estimatedBudget: estimatedBudget,
+    );
+    try {
       await Firestore().createTrip(trip);
-      if(mounted){
+      if (mounted) {
         Fluttertoast.showToast(msg: "Trip Created");
         // Hiding the progress bar
         Navigator.pop(context);
         // Retuning from create trip page.
         Navigator.pop(context);
       }
-    }catch(e){
+    } catch (e) {
       log("Exception in creating trip $e");
-      if (mounted){
+      if (mounted) {
         CustomDialogs().showDangerMessage(context, "Failed to Create Trip");
       }
       // Hiding progress bar.
-      if(mounted){
+      if (mounted) {
         Navigator.pop(context);
       }
     }

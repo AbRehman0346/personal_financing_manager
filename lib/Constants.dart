@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -228,6 +229,7 @@ class ProjectFonts {
 class ProjectData {
   static const String APP_VERSION = "v1.0.0";
   static UserModel? user;
+  static User? authuser;
   String contactEmail = "abrehman0346@gmail.com";
 }
 

@@ -1,12 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expense_tracking/AppConfigs.dart';
+import 'package:expense_tracking/screens/home_screen_components/calc_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../Constants.dart';
 
 class UpperMainBox extends StatelessWidget {
-  const UpperMainBox({super.key});
+  final String balance;
+  const UpperMainBox({super.key, required this.balance});
 
   @override
   Widget build(BuildContext context) {
+
     return Padding(
       padding: const EdgeInsets.only(top: 8.0, bottom: 8),
       child: Center(
@@ -31,19 +36,19 @@ class UpperMainBox extends StatelessWidget {
                 ProjectPaths.front,
                 fit: BoxFit.cover,
               ),
-              const Padding(
-                padding: EdgeInsets.only(left: 10),
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "Total Balance",
                       style: TextStyle(color: Colors.white, fontSize: 18),
                     ),
                     Text(
-                      "\$ 802.23",
-                      style: TextStyle(color: Colors.white, fontSize: 30),
+                      "${AppConfigs.getCurrencySignBeforeAmount} $balance",
+                      style: const TextStyle(color: Colors.white, fontSize: 30),
                     ),
                   ],
                 ),

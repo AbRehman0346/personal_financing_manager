@@ -8,10 +8,12 @@ import 'package:flutter/material.dart';
 import '../../services/firestore/firestore.dart';
 
 class RecentTrip extends StatelessWidget {
-  const RecentTrip({super.key});
+  final List<DocumentSnapshot> docs;
+  const RecentTrip({super.key, required this.docs});
 
   @override
   Widget build(BuildContext context) {
+    TripListViewItem item = TripListViewItem();
     return Container(
       width: MediaQuery.of(context).size.width * 0.92,
       // height: 275,
@@ -31,47 +33,31 @@ class RecentTrip extends StatelessWidget {
             ),
           ),
           const Divider(),
-          FutureBuilder(future: Firestore().getTrips(), builder: (context, AsyncSnapshot snap){
-            if(snap.hasData){
-              List<DocumentSnapshot> docs = snap.data.docs;
-
-              if (docs.isEmpty){
-                return const SizedBox(
-                    height: 200,
-                    child: Center(
-                      child: Text("No Recent Trips"),
-                    ),
-                );
-              }
-
-
-             return ListView.builder(
-                 shrinkWrap: true,
-                 physics: const NeverScrollableScrollPhysics(),
-                 itemCount: docs.length,
-                 itemBuilder: (BuildContext context, int index) {
-                   Trip trip = Trip.fromDocumentSnapshot(docs[index]);
-                   return GestureDetector(
-                       onTap: () {
-                         Navigator.push(
-                           context,
-                           RouteGenerator.generateRoute(
-                             RouteSettings(name: Routes.tripDetails, arguments: trip),
-                           ),
-                         );
-                       },
-                       child: TripListViewItem().build(context, trip));
-                 }
-             );
-            }else{
-              return SizedBox(
-                height: 200,
-                child: Center(
-                  child: CustomProgressBar.defaultProgressbar(),
-                ),
-              );
-            }
-          }),
+          docs.isEmpty
+              ? const SizedBox(
+                  height: 200,
+                  child: Center(
+                    child: Text("No Recent Trips"),
+                  ),
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: docs.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    Trip trip = Trip.fromDocumentSnapshot(docs[index]);
+                    return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            RouteGenerator.generateRoute(
+                              RouteSettings(
+                                  name: Routes.tripDetails, arguments: trip),
+                            ),
+                          );
+                        },
+                        child: item.build(context, trip));
+                  }),
         ],
       ),
     );

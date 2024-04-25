@@ -19,6 +19,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../models/contact_model.dart';
 import '../services/firestore/firestore.dart';
+import '../widgets/xtextfield.dart';
 
 class TripDetails extends StatefulWidget {
   final Trip trip;
@@ -31,19 +32,24 @@ class TripDetails extends StatefulWidget {
 class _TripDetailsState extends State<TripDetails> {
   late Trip trip;
   List<int> _expandedPaymentDetails = [];
+  bool enable = false;
 
   @override
   void initState() {
     trip = widget.trip;
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    enable = trip.endDate == null;
     Color heroChildrenColor = Colors.white;
     var generalServices = GeneralServices();
-    var balancedetails = TripDetails_BalanceDetailsComponent(payments: trip.payments, totalBalance: 1000, participants: trip.participants);
+    var balancedetails = TripDetails_BalanceDetailsComponent(payments: trip.payments, totalBalance: trip.budget, participants: trip.participants);
     double tripTotalExpense = trip.calcTripTotalExpense();
+    String dateformat = "MMMM dd-yy";
+    log("TripEndDate: ${trip.endDate}");
 
     return Scaffold(
       backgroundColor: ProjectColors.bg,
@@ -143,7 +149,7 @@ class _TripDetailsState extends State<TripDetails> {
                                   ),
                                   // Trip Start Date
                                   Text(
-                                    HandleDatetime.formatDateTime(trip.tripStarts, format: "MMMM dd-yy"),
+                                    HandleDatetime.formatDateTime(trip.tripStarts, format: dateformat),
                                     style: TextStyle(
                                       color: heroChildrenColor,
                                       fontSize: 18,
@@ -165,7 +171,7 @@ class _TripDetailsState extends State<TripDetails> {
                                     ),
                                   ),
                                   Text(
-                                    trip.endDate ?? "ongoing",
+                                    enable ? "ongoing" : HandleDatetime.formatDateTime(trip.endDate!, format: dateformat),
                                     style: TextStyle(
                                       color: heroChildrenColor,
                                       fontSize: 18,
@@ -243,11 +249,91 @@ class _TripDetailsState extends State<TripDetails> {
                                 color: Colors.grey.shade700, fontSize: 12),
                           ),
                           // Money
-                          Text(
-                            "${AppConfigs.getCurrencySignBeforeAmount} ${balancedetails.totalBalanceLeftInPocket}",
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w900,
+                          GestureDetector(
+                            onTap: ()async {
+      if (!enable){
+        Fluttertoast.showToast(msg: "Trip has been ended");
+        return;
+      }
+
+                                showDialog(
+                                    context: context,
+                                    builder: (_) {
+                                      TextEditingController newbudget = TextEditingController();
+                                      CustomDialogs dialogs = CustomDialogs();
+                                      return SimpleDialog(
+                                        title: const Text("New Budget"),
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                        backgroundColor: Colors.white,
+                                        surfaceTintColor: Colors.white,
+                                        children: [
+                                          XTextField(
+                                            hint: "Enter New Budget",
+                                            fontSize: 17,
+                                            keyboardType: TextInputType.number,
+                                            controller: newbudget,
+                                          ),
+                                          const SizedBox(height: 10,),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: ()async{
+                                        String budget = newbudget.text;
+                                        if (budget == ""){
+                                          Fluttertoast.showToast(msg: "Provide New Budget");
+                                        }
+
+                                        double? dbudget = double.tryParse(budget);
+                                        if (dbudget == null){
+                                          dialogs.showDangerMessage(context, "Error: Make sure budget doesn't contain any non number value");
+                                          return;
+                                        }
+
+                                        if (trip.tripId == null){
+                                          dialogs.showDangerMessage(context, "Error: Trip Id Not Found");
+                                          return;
+                                        }
+
+                                        dialogs.showAndroidProgressBar(context);
+
+                                        bool result = await Firestore().updateBudget(budget, trip.tripId!);
+                                        if (result){
+                                          Fluttertoast.showToast(msg: "Updated Successfully");
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                          setState(() {
+                                            trip.budget = dbudget;
+                                          });
+                                        }
+                                      },
+                                                child: Container(
+                                                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.blue.shade900,
+                                                      borderRadius: const BorderRadius.all(Radius.circular(20))
+                                                  ),
+                                                  child:
+                                                  const Text("Update",
+                                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 15,),
+                                        ],
+                                      );
+                                    },
+                                );
+                            },
+                            child: Text(
+                              "${AppConfigs.getCurrencySignBeforeAmount} ${balancedetails.totalBalanceLeftInPocket}",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                                color: balancedetails.totalBalanceLeftInPocket.isNegative ? Colors.red : Colors.green
+                              ),
                             ),
                           ),
                           Text(
@@ -278,7 +364,7 @@ class _TripDetailsState extends State<TripDetails> {
                           // Money
                           Text(
                             "${AppConfigs.getCurrencySignBeforeAmount}${balancedetails.ipaid}",
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 19,
                             ),
                           ),
@@ -327,16 +413,18 @@ class _TripDetailsState extends State<TripDetails> {
                       }
 
 
-                      showDialog(
-                          context: context,
-                          builder: (_)=> SimpleDialog(
-                            backgroundColor: Colors.white,
-                            surfaceTintColor: Colors.white,
-                            children: [
-                              ShowFinalResultsDialog(result: finalResults)
-                            ],
-                          )
-                      );
+
+                        showDialog(
+                            context: context,
+                            builder: (_)=> SimpleDialog(
+                              backgroundColor: Colors.white,
+                              surfaceTintColor: Colors.white,
+                              children: [
+                                ShowFinalResultsDialog(result: finalResults, totalExpense: tripTotalExpense, endTrip: endTrip, enableFunctions: enable,)
+                              ],
+                            )
+                        );
+
 
 
                       // Navigator.push(context, MaterialPageRoute(builder: (_)=>ShowFinalResultsDialog(result: finalResults,)));
@@ -389,29 +477,36 @@ class _TripDetailsState extends State<TripDetails> {
                           ),
                         ),
                         // Add Button
-                        Container(
-                          padding: const EdgeInsets.only(
-                              left: 15, right: 15, top: 5, bottom: 5),
-                          decoration: BoxDecoration(
-                            color: ProjectColors.shadow,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.add,
-                                size: 20,
-                              ),
-                              SizedBox(width: 2),
-                              Text("Add"),
-                            ],
+                        GestureDetector(
+                          onTap: enable ? contributeActionListener : null,
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                                left: 15, right: 15, top: 5, bottom: 5),
+                            decoration: BoxDecoration(
+                              color: ProjectColors.shadow,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.add,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 2),
+                                Text("Add"),
+                              ],
+                            ),
                           ),
                         )
                       ],
                     ),
                     const Divider(),
                     // Expanse Details List View
+                    trip.payments.isEmpty ? const SizedBox(
+                      height: 80,
+                      child: Center(child: Text("No Contribution Yet!"),),
+                    ) :
                     ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
@@ -469,9 +564,9 @@ class _TripDetailsState extends State<TripDetails> {
                                 ),
                               ),
                               isExpanded ? Padding(
-                                padding: EdgeInsets.only(left: 70, bottom: 10),
+                                padding: const EdgeInsets.only(left: 70, bottom: 10),
                                 child: Text(payment.msg, style: TextStyle(color: Colors.grey),),
-                              ):SizedBox.shrink(),
+                              ): const SizedBox.shrink(),
                             ],
                           ),
                         );
@@ -480,7 +575,7 @@ class _TripDetailsState extends State<TripDetails> {
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -489,7 +584,7 @@ class _TripDetailsState extends State<TripDetails> {
         child: ElevatedButton(
           style: ButtonStyle(
             backgroundColor:
-                MaterialStateProperty.all(ProjectColors.primaryColor),
+                MaterialStateProperty.all(enable ? ProjectColors.primaryColor : Colors.grey),
             foregroundColor: MaterialStateProperty.all(ProjectColors.secondary),
           ),
           onPressed: contributeActionListener,
@@ -511,6 +606,11 @@ class _TripDetailsState extends State<TripDetails> {
   }
 
   void contributeActionListener(){
+    if (!enable){
+      Fluttertoast.showToast(msg: "Trip has been ended");
+      return;
+    }
+
     showDialog(context: context, builder: (context){
       return SimpleDialog(
         title: const Text("Contribute to Trip"),
@@ -525,5 +625,29 @@ class _TripDetailsState extends State<TripDetails> {
         ],
       );
     });
+  }
+
+  void endTrip()async{
+    CustomDialogs dialogs = CustomDialogs();
+    dialogs.showAndroidProgressBar(context);
+
+    dialogs.dangerOperationDialog(
+        context: context,
+        title: "End Trip",
+        msg: "You want to end the trip?",
+        primaryButtonOnPressed: () async {
+          await Firestore().endTrip(trip.tripId!);
+          setState(() {
+            trip.endDate = DateTime.now().toString();
+            Fluttertoast.showToast(msg: "Trip has been Ended");
+          });
+          if(mounted){
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.pop(context);
+          }
+        },
+        primaryButtonText: "End Trip",
+    );
   }
 }
