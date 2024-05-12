@@ -1,7 +1,5 @@
-import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracking/Constants.dart';
-import 'package:expense_tracking/models/trip_model.dart';
 import 'package:expense_tracking/screens/home_screen_components/calc_data.dart';
 import 'package:expense_tracking/screens/shared/cappbar.dart';
 import 'package:expense_tracking/screens/shared/footer.dart';
@@ -90,3 +88,4 @@ color: Colors.white,
     });
   }
 }
+

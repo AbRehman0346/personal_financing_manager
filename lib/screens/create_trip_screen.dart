@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:typed_data';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracking/models/trip_model.dart';
 import 'package:expense_tracking/models/user_data_model.dart';
 import 'package:expense_tracking/services/firestore/firestore.dart';
@@ -16,6 +17,7 @@ import 'package:image_picker/image_picker.dart';
 import '../Constants.dart';
 import '../models/contact_model.dart';
 import '../models/upload/TripUploadModel.dart';
+import '../services/messaging/messaging.dart';
 import '../widgets/xtextfield.dart';
 
 class CreateTripScreen extends StatefulWidget {
@@ -460,6 +462,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
     );
     try {
       await Firestore().createTrip(trip);
+      await sendCreateTripNotification(trip);
       if (mounted) {
         Fluttertoast.showToast(msg: "Trip Created");
         // Hiding the progress bar
@@ -477,6 +480,21 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
         Navigator.pop(context);
       }
     }
+  }
+
+  Future<void> sendCreateTripNotification(TripUploadModel trip) async {
+    // Sending notification
+    List<String> participants = trip.participants;
+    // participants.remove(ProjectData.user?.phone);
+    QuerySnapshot query = await Firestore().getNotificationTokens(participants);
+    List<DocumentSnapshot> docs = query.docs;
+
+    List<String> tokens = [];
+    for (int i=0; i<docs.length; i++){
+      tokens.add(docs[i].get("token"));
+    }
+
+    Messaging().sendNotificationToDevice("Trip Created", "You have been added to the trip \"${trip.tripName}\" by ${ProjectData.user!.phone}", tokens);
   }
 
   void selectImage() async {

@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracking/screens/temp_tests/test_contstants.dart';
+import 'package:expense_tracking/services/messaging/messaging.dart';
 import 'package:expense_tracking/services/services_helper_functions.dart';
 import 'package:expense_tracking/services/storage.dart';
 import 'firebase_collections.dart';
@@ -21,8 +24,31 @@ class FirestoreAuth extends Collections{
         .doc(model.phone)
         .set(model.toMap(downloadurl));
 
+    await uploadNotificationToken(model.phone);
+
     // creating a central place to access user data.
     ProjectData.user = await getUserData(model.phone);
+  }
+
+  Future<void> uploadNotificationToken(String phone)async{
+    String? token = await Messaging().getToken();
+    if(token != null){
+      await notificationReference.doc(phone).set({
+        "id":phone,
+        "token": token
+      });
+    }else{
+      log("Notification Token was found null");
+    }
+  }
+
+  Future<void> updateNotificationToken(String phone, {String? token})async {
+    token ??= await Messaging().getToken();
+    if(token == null) return;
+    await notificationReference.doc(phone).update({
+      "id": phone,
+      "token": token
+    });
   }
 
   Future<UserModel> getUserData(String phone) async {

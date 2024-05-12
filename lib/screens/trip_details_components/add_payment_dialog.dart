@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracking/models/trip_model.dart';
+import 'package:expense_tracking/services/messaging/messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -100,7 +102,11 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
                 throw Exception("Unexpected Error\nCan't find user data.");
               }
 
+              // Adding payment
               await Firestore().addTripPayment(payment, trip.tripId!);
+
+              sendPaymentNotifications(payment);
+
 
                 widget.complete();
 
@@ -113,5 +119,18 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
         ),
       ],
     );
+  }
+
+  Future<void> sendPaymentNotifications(TripPayment payment) async {
+    // Sending notification
+    List<String> participants = trip.participants;
+    participants.remove(ProjectData.user?.phone);
+    QuerySnapshot query = await Firestore().getNotificationTokens(participants);
+    List<DocumentSnapshot> docs = query.docs;
+    List<String> tokens = [];
+    for (int i=0; i<docs.length; i++){
+      tokens.add(docs[i].get("token"));
+    }
+    Messaging().sendNotificationToDevice("Payment Added", "Payment ${payment.amount} added by ${ProjectData.user!.phone}", tokens);
   }
 }

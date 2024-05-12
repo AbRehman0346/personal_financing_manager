@@ -543,6 +543,7 @@ class _LoginSignupState extends State<LoginSignup> {
         }
       }
 
+      // Verifying country code.
       if (signupSelectedCountryCode == null){
         Fluttertoast.showToast(msg: "Unexpected Error in Country Code.");
         return;

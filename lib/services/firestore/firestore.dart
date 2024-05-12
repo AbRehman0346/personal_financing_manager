@@ -31,6 +31,12 @@ class Firestore extends Collections{
     return true;
   }
 
+
+  Future<QuerySnapshot> getNotificationTokens(List<String> phones)async {
+    QuerySnapshot query = await notificationReference.where("id", whereIn: phones).get();
+    return query;
+  }
+
   Future<bool> updateBudget(String budget, String docId) async {
     TripModelFields f = TripModelFields();
     await tripReference.doc(docId).update(

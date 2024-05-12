@@ -1,0 +1,5 @@
+process to remove account
+	delete account from authentication
+	delete account data from firestore
+	delelte account profile pic from storage
+	somehow deactivate account from other groups...
