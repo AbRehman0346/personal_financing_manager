@@ -28,7 +28,6 @@ class CreateTripScreen extends StatefulWidget {
 
 class _CreateTripScreenState extends State<CreateTripScreen> {
   Uint8List? file;
-  // List<ContactModel> addedContacts = [];
   List<String> addedContactNumbers = [];
   List<ContactModel> contacts = [];
   List<bool> isAppUser = [];
@@ -466,7 +465,8 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
   Future<void> sendCreateTripNotification(TripUploadModel trip) async {
     // Sending notification
     List<String> participants = trip.participants;
-    participants.remove(ProjectData.user!.phone);
+    participants = participants.where((element) => element != ProjectData.user!.phone).toList();
+    log(participants.toString());
     QuerySnapshot query = await Firestore().getNotificationTokens(participants);
     List<DocumentSnapshot> docs = query.docs;
 
@@ -478,7 +478,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
     Messaging().sendNotificationToDevice(
         "Trip Created",
         "You have been added to the trip \"${trip.tripName}\" by ${ProjectData.user!.phone}",
-        tokens);
+        tokens,);
   }
 
   void selectImage() async {
