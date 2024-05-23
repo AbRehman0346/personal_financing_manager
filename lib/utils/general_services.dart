@@ -19,28 +19,26 @@ class GeneralServices{
   }
 
   String getIdFromPhone(String phone){
-    return phone.replaceAll(RegExp(r'[+ ]'), "");
+    String id = phone.replaceAll(RegExp(r'[+ -]'), "");
+    if(id[0] == "0"){
+      // TODO: Country Code 92 is hardcoded.. need to fix it according to other countries
+      // local country code... also need to check if any country code has 0 in starting in which case
+      // this function will not perform as expected.
+      id = id.replaceFirst("0", "92");
+    }
+    return id;
   }
 
 
-  Future<ContactModel?> getContactFromNumber(String number, {bool returnSameIfNotFound = false})async{
+  Future<ContactModel?> getContactFromNumber(String number)async{
     List<ContactModel>? contacts = await OS().getContacts();
-    if (contacts == null){
-      if (returnSameIfNotFound){
-        return ContactModel.fillOnlyNecessaryField(name: number, number: number);
-      }else{
-        throw Exception("Contact Permission Denied");
-      }
-    }
-    for (ContactModel contact in contacts){
+    if (contacts != null){
+      for (ContactModel contact in contacts){
         if (number == getIdFromPhone(contact.number)){
           return contact;
         }
+      }
     }
-    if (returnSameIfNotFound){
-      return ContactModel.fillOnlyNecessaryField(name: number, number: number);
-    }else{
-      return null;
-    }
+    return ContactModel.fillOnlyNecessaryField(name: number, number: number);
   }
 }

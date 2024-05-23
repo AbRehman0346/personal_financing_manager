@@ -19,7 +19,7 @@ PreferredSizeWidget cAppBar({required BuildContext context, required String titl
       title,
       style: TextStyle(
         fontFamily: ProjectFonts.protest,
-        color: ProjectColors.primaryColor,
+        color: ProjectColors.primaryBlue,
       ),
     ),
     actions: [
@@ -31,12 +31,12 @@ PreferredSizeWidget cAppBar({required BuildContext context, required String titl
           padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.only(right: 10),
           decoration: BoxDecoration(
-            color: ProjectColors.shadow,
+            color: ProjectColors.white_shade2,
             borderRadius: BorderRadius.circular(50),
           ),
           child: Icon(
             Icons.notifications_none,
-            color: ProjectColors.primaryColor,
+            color: ProjectColors.primaryBlue,
           ),
         ),
       ),

@@ -1,5 +1,5 @@
 import 'package:expense_tracking/models/trip_model.dart';
-import 'package:expense_tracking/screens/create_trip_screen.dart';
+import 'package:expense_tracking/screens/create_trip_screen/create_trip_screen.dart';
 import 'package:expense_tracking/screens/home.dart';
 import 'package:expense_tracking/screens/login_signup.dart';
 import 'package:expense_tracking/screens/temp_tests/temp_tests_home.dart';

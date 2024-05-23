@@ -10,7 +10,4 @@ class ServicesHelperFunction {
     return phone.replaceAll("@gmail.com", "");
   }
 
-  String getIdFromPhone(String phone){
-    return phone.replaceAll("+", "").replaceAll(" ", "");
-  }
 }

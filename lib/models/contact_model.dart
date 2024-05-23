@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:expense_tracking/services/services_helper_functions.dart';
+import 'package:expense_tracking/utils/general_services.dart';
 import 'package:fast_contacts/fast_contacts.dart';
 
 import '../Constants.dart';
@@ -8,7 +11,6 @@ class ContactModel{
   String id = "";
   String name = "";
   String number = "";
-  bool? isuser;
   bool isowner = false;
 
   ContactModel._();
@@ -17,13 +19,12 @@ class ContactModel{
     return ContactModel._();
   }
 
-  factory ContactModel.fill({required String id, required String name, required String number, required bool? isuser}){
+  factory ContactModel.fill({required String id, required String name, required String number}){
     ContactModel model = ContactModel._();
     model.id = id;
     model.name = name;
     model.number = number;
-    model.isowner = ServicesHelperFunction().getIdFromPhone(number) == ProjectData.user!.phone;
-    model.isuser = isuser;
+    model.isowner = GeneralServices().getIdFromPhone(number) == ProjectData.user!.phone;
     return model;
   }
 
@@ -31,20 +32,24 @@ class ContactModel{
     ContactModel model = ContactModel._();
     model.name = name;
     model.number = number;
-    model.isowner = ServicesHelperFunction().getIdFromPhone(number) == ProjectData.user!.phone;
+    model.isowner = GeneralServices().getIdFromPhone(number) == ProjectData.user!.phone;
     return model;
   }
 
-
-  Future<List<ContactModel>> getFromContacts({required List<Contact> contacts, bool getIsAppUser = false}) async {
+  Future<List<ContactModel>> getFromContact({required Contact contact}) async {
     List<ContactModel> models = [];
+      for (Phone phone in contact.phones){
+        models.add(ContactModel.fill(id: contact.id, name: contact.displayName, number: phone.number));
+      }
+    return models;
+  }
+
+  Future<List<ContactModel>> getFromContacts({required List<Contact> contacts}) async {
+    List<ContactModel> models = [];
+    GeneralServices gs = GeneralServices();
     for (Contact contact in contacts){
       for (Phone phone in contact.phones){
-        bool? isAppUser;
-        if(getIsAppUser){
-          isAppUser = await FirestoreAuth().isAppUser(ServicesHelperFunction().getIdFromPhone(phone.number));
-        }
-        models.add(ContactModel.fill(id: contact.id, name: contact.displayName, number: phone.number, isuser: isAppUser));
+        models.add(ContactModel.fill(id: gs.getIdFromPhone(phone.number), name: contact.displayName, number: phone.number));
       }
     }
     return models;

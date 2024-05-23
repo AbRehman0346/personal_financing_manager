@@ -30,7 +30,7 @@ class _TripScreenState extends State<TripScreen> {
     double footerHeight = FooterProperties().footerHeight;
 
     return Scaffold(
-      backgroundColor: ProjectColors.bg,
+      backgroundColor: ProjectColors.white_shade2,
       appBar: appbar,
       body: FutureBuilder(
         future: Firestore().getTrips(),
@@ -60,7 +60,7 @@ class _TripScreenState extends State<TripScreen> {
                           }),
                       isFirstSelected
                           ? OngoingTripTab(docs: docs)
-                          : const TripHistoryTab(),
+                          : TripHistoryTab(docs: docs),
                     ],
                   ),
                 ),

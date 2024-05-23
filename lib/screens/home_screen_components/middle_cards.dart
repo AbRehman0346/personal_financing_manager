@@ -89,7 +89,7 @@ class MiddleCards extends StatelessWidget {
                       child: SvgPicture.asset(
                         ProjectPaths.THUMBS_UP,
                         colorFilter: ColorFilter.mode(
-                          ProjectColors.primaryColor,
+                          ProjectColors.primaryBlue,
                           BlendMode.srcIn,
                         ),
                       ),

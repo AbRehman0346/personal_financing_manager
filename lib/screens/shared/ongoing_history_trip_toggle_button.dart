@@ -16,7 +16,7 @@ class OnGoingTripHistoryToggleButton {
       height: 60,
       width: MediaQuery.of(context).size.width * 0.9,
       decoration: BoxDecoration(
-        color: ProjectColors.secondary,
+        color: ProjectColors.white,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -54,7 +54,7 @@ class OnGoingTripHistoryToggleButton {
         child: Container(
           margin: const EdgeInsets.all(7),
           decoration: BoxDecoration(
-            color: selected ? ProjectColors.primaryColor : Colors.transparent,
+            color: selected ? ProjectColors.primaryBlue : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Center(

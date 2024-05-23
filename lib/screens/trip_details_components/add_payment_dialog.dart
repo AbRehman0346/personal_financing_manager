@@ -114,7 +114,7 @@ class _AddPaymentDialogState extends State<AddPaymentDialog> {
                 Navigator.pop(context);
                 Navigator.pop(context);
               }
-            }, child: Text("Contribute", style: TextStyle(color: ProjectColors.primaryColor, fontWeight: FontWeight.bold, fontSize: 16),)),
+            }, child: Text("Contribute", style: TextStyle(color: ProjectColors.primaryBlue, fontWeight: FontWeight.bold, fontSize: 16),)),
           ],
         ),
       ],

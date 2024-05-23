@@ -49,10 +49,10 @@ class _TripDetailsState extends State<TripDetails> {
     var balancedetails = TripDetails_BalanceDetailsComponent(payments: trip.payments, totalBalance: trip.budget, participants: trip.participants);
     double tripTotalExpense = trip.calcTripTotalExpense();
     String dateformat = "MMMM dd-yy";
-    log("TripEndDate: ${trip.endDate}");
+    // log("TripEndDate: ${trip.endDate}");
 
     return Scaffold(
-      backgroundColor: ProjectColors.bg,
+      backgroundColor: ProjectColors.white_shade2,
       appBar: AppBar(
         title: const Text(
           "Trip Details",
@@ -203,14 +203,14 @@ class _TripDetailsState extends State<TripDetails> {
                             Container(
                               padding: const EdgeInsets.all(5),
                               decoration: BoxDecoration(
-                                color: ProjectColors.shadow,
+                                color: ProjectColors.white_shade2,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Text(
                                 "${AppConfigs.getCurrencySignBeforeAmount} ${tripTotalExpense} ${AppConfigs.getCurrencySignAfterAmount}",
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: ProjectColors.primaryColor,
+                                  color: ProjectColors.primaryBlue,
                                 ),
                               ),
                             ),
@@ -227,7 +227,7 @@ class _TripDetailsState extends State<TripDetails> {
             Container(
               margin: const EdgeInsets.all(15),
               decoration: BoxDecoration(
-                color: ProjectColors.secondary,
+                color: ProjectColors.white,
                 borderRadius: BorderRadius.circular(10),
               ),
               // Total Balance, I Paid, Spent Box...
@@ -483,7 +483,7 @@ class _TripDetailsState extends State<TripDetails> {
                             padding: const EdgeInsets.only(
                                 left: 15, right: 15, top: 5, bottom: 5),
                             decoration: BoxDecoration(
-                              color: ProjectColors.shadow,
+                              color: ProjectColors.white_shade2,
                               borderRadius: BorderRadius.circular(15),
                             ),
                             child: const Row(
@@ -537,7 +537,7 @@ class _TripDetailsState extends State<TripDetails> {
                                   payment.spentAt,
                                   style: const TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                                subtitle: FutureBuilder(future: generalServices.getContactFromNumber(payment.payerNumber, returnSameIfNotFound: true), builder: (_, snap){
+                                subtitle: FutureBuilder(future: generalServices.getContactFromNumber(payment.payerNumber), builder: (_, snap){
                                   if(snap.hasData){
                                     return Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -584,8 +584,8 @@ class _TripDetailsState extends State<TripDetails> {
         child: ElevatedButton(
           style: ButtonStyle(
             backgroundColor:
-                MaterialStateProperty.all(enable ? ProjectColors.primaryColor : Colors.grey),
-            foregroundColor: MaterialStateProperty.all(ProjectColors.secondary),
+                MaterialStateProperty.all(enable ? ProjectColors.primaryBlue : Colors.grey),
+            foregroundColor: MaterialStateProperty.all(ProjectColors.white),
           ),
           onPressed: contributeActionListener,
           child: const Text(
@@ -615,10 +615,10 @@ class _TripDetailsState extends State<TripDetails> {
       return SimpleDialog(
         title: const Text("Contribute to Trip"),
         contentPadding: const EdgeInsets.all(40),
-        titleTextStyle: TextStyle(fontFamily: ProjectFonts.lobster, color: ProjectColors.primaryColor, fontSize: 28, fontWeight: FontWeight.bold),
+        titleTextStyle: TextStyle(fontFamily: ProjectFonts.lobster, color: ProjectColors.primaryBlue, fontSize: 28, fontWeight: FontWeight.bold),
         shadowColor: Colors.white,
         elevation: 20,
-        backgroundColor: ProjectColors.secondary,
+        backgroundColor: ProjectColors.white,
         surfaceTintColor: Colors.white,
         children: [
             AddPaymentDialog(trip: trip, complete: operationComplete),

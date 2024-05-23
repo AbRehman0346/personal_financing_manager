@@ -24,8 +24,8 @@ Future<void> _firebaseBackgroundNotificationHandler(RemoteMessage message) async
   if (message.notification != null){
     String title = message.notification!.title.toString();
     String content = message.notification!.body.toString();
-    log("Title: $title");
-    log("Content: $content");
+    // log("Title: $title");
+    // log("Content: $content");
     NotificationService().createNotification(title: title, content: content);
   }else{
     log("Error: Notification is null");

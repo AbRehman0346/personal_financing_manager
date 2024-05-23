@@ -33,7 +33,7 @@ class _HomeState extends State<Home> {
         List<DocumentSnapshot> docs = snap.data.docs;
         CalcHomePageDataResponse homepagedata = CalcHomePageData().calc(docs);
         return Scaffold(
-          backgroundColor: ProjectColors.bg,
+          backgroundColor: ProjectColors.white_shade2,
           appBar: appbar,
           body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -80,7 +80,7 @@ class _HomeState extends State<Home> {
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-color: Colors.white,
+            color: Colors.white,
             child: const CupertinoActivityIndicator(),
           ),
         );

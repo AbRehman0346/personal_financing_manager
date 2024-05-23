@@ -18,7 +18,7 @@ class NewTripFloatingButton {
         margin: const EdgeInsets.only(bottom: 50),
         width: 120,
         decoration: BoxDecoration(
-          color: ProjectColors.primaryColor,
+          color: ProjectColors.primaryBlue,
           borderRadius: BorderRadius.circular(50),
         ),
         child: const Row(

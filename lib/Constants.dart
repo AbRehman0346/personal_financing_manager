@@ -210,13 +210,13 @@ class CustomDialogs {
 
 
 class ProjectColors {
-  static Color get primaryColor => const Color.fromRGBO(7, 61, 255, 1);
+  static Color get primaryBlue => const Color.fromRGBO(7, 61, 255, 1);
 
-  static Color get secondary => Colors.white;
+  static Color get white => Colors.white;
 
-  static Color get bg => const Color.fromRGBO(245, 245, 245, 1);
+  static Color get white_shade2 => const Color.fromRGBO(245, 245, 245, 1);
 
-  static Color get shadow => const Color.fromRGBO(245, 245, 245, 1);
+  static Color get selectionColorBlack => const Color.fromRGBO(0, 0, 0, 1);
 }
 
 class ProjectFonts {

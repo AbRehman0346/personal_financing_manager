@@ -20,7 +20,7 @@ class Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double iconWidth = 24;
-    Color color = ProjectColors.primaryColor;
+    Color color = ProjectColors.primaryBlue;
     return Container(
       padding: const EdgeInsets.only(top: 4.0),
       decoration: const BoxDecoration(
@@ -96,39 +96,39 @@ class Footer extends StatelessWidget {
           ),
 
           // Group
-          Column(
-            children: [
-              Icon(
-                Icons.groups_outlined,
-                size: iconWidth,
-                color: selectedIndex == 3 ? color : null,
-              ),
-              Text(
-                "Group",
-                style: TextStyle(
-                    color: selectedIndex == 3 ? color : null,
-                    fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
+          // Column(
+          //   children: [
+          //     Icon(
+          //       Icons.groups_outlined,
+          //       size: iconWidth,
+          //       color: selectedIndex == 3 ? color : null,
+          //     ),
+          //     Text(
+          //       "Group",
+          //       style: TextStyle(
+          //           color: selectedIndex == 3 ? color : null,
+          //           fontWeight: FontWeight.bold),
+          //     )
+          //   ],
+          // ),
 
           //   Profile
-          Column(
-            children: [
-              SvgPicture.asset(
-                ProjectPaths.PROFILE_ICON,
-                width: iconWidth,
-                colorFilter: ColorFilter.mode(
-                    selectedIndex == 4 ? color : Colors.black, BlendMode.srcIn),
-              ),
-              Text(
-                "Profile",
-                style: TextStyle(
-                    color: selectedIndex == 4 ? color : null,
-                    fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
+          // Column(
+          //   children: [
+          //     SvgPicture.asset(
+          //       ProjectPaths.PROFILE_ICON,
+          //       width: iconWidth,
+          //       colorFilter: ColorFilter.mode(
+          //           selectedIndex == 4 ? color : Colors.black, BlendMode.srcIn),
+          //     ),
+          //     Text(
+          //       "Profile",
+          //       style: TextStyle(
+          //           color: selectedIndex == 4 ? color : null,
+          //           fontWeight: FontWeight.bold),
+          //     )
+          //   ],
+          // ),
         ],
       ),
     );

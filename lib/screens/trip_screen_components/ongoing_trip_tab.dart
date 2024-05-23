@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_tracking/Constants.dart';
 import 'package:expense_tracking/models/trip_model.dart';
+import 'package:expense_tracking/route_generator.dart';
 import 'package:expense_tracking/utils/general_services.dart';
 import 'package:expense_tracking/services/storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,13 +28,18 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
     return Expanded(
       child: ListView.builder(
         itemCount: docs.length,
-        itemBuilder: (context, index) => _card(docs[index]),
+        itemBuilder: (context, index) {
+          return _card(docs[index]);
+        },
       ),
     );
   }
 
   Widget _card(DocumentSnapshot doc) {
     Trip trip = Trip.fromDocumentSnapshot(doc);
+
+    if (trip.endDate != null) return const SizedBox();
+
     double paddingOfImages = -30;
     Color color = Colors.grey.shade700;
     return Container(
@@ -103,7 +109,7 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
                       padding: EdgeInsets.only(left: paddingOfImages),
                       child: Container(
                         decoration: BoxDecoration(
-                          border: Border.all(color: ProjectColors.bg, width: 2),
+                          border: Border.all(color: ProjectColors.white_shade2, width: 2),
                           borderRadius: BorderRadius.circular(50),
                         ),
                         child: ClipOval(
@@ -164,8 +170,8 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
 
                 //Total Expense
                 Container(
-                  margin: EdgeInsets.all(10),
-                  padding: EdgeInsets.all(7),
+                  margin: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(7),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
@@ -180,15 +186,15 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
 
                       // Total Expense: $ 300 USD
                       Container(
-                        padding: EdgeInsets.all(7),
+                        padding: const EdgeInsets.all(7),
                         decoration: BoxDecoration(
-                          color: ProjectColors.shadow,
+                          color: ProjectColors.white_shade2,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          "\$ 300 USD",
+                          "\$ ${trip.calcTripTotalExpense()} USD",
                           style: TextStyle(
-                            color: ProjectColors.primaryColor,
+                            color: ProjectColors.primaryBlue,
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
@@ -204,13 +210,15 @@ class _OngoingTripTabState extends State<OngoingTripTab> {
                     child: ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(
-                          ProjectColors.primaryColor,
+                          ProjectColors.primaryBlue,
                         ),
                         foregroundColor: MaterialStateProperty.all(
-                          ProjectColors.secondary,
+                          ProjectColors.white,
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(context, RouteGenerator.generateRoute(RouteSettings(name: Routes.tripDetails, arguments: trip)));
+                      },
                       child: const Text(
                         "View Details",
                         style: TextStyle(fontSize: 15),

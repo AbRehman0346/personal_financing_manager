@@ -46,7 +46,10 @@ class _SplashScreenState extends State<SplashScreen> {
           Navigator.pushAndRemoveUntil(context, RouteGenerator.generateRoute(const RouteSettings(name: Routes.signin_signup)), (route) => false);
         });
         // navigating to home
-        Navigator.pushAndRemoveUntil(context, RouteGenerator.generateRoute(const RouteSettings(name: Routes.homeScreen)), (route) => false);
+        Navigator.pushAndRemoveUntil(
+            context,
+            RouteGenerator.generateRoute(const RouteSettings(name: Routes.homeScreen)),
+                (route) => false);
       });
     });
   }
