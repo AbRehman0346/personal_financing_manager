@@ -45,15 +45,15 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
           fontFamily: ProjectFonts.protestStrikeRegular,
         ),
       ),
-      actions: [
-        TextButton(
-            onPressed: () async {
-              String? url =
-                  await Storage().getProfileImageFromPhone("9234689423920");
-              log("Here is URL: $url");
-            },
-            child: const Text("Test"))
-      ],
+      // actions: [
+      //   TextButton(
+      //       onPressed: () async {
+      //         String? url =
+      //             await Storage().getProfileImageFromPhone("9234689423920");
+      //         log("Here is URL: $url");
+      //       },
+      //       child: const Text("Test"))
+      // ],
     );
 
     Widget createTripButton = Container(
