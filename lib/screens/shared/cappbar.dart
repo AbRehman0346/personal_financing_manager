@@ -22,24 +22,24 @@ PreferredSizeWidget cAppBar({required BuildContext context, required String titl
         color: ProjectColors.primaryBlue,
       ),
     ),
-    // actions: [
-    //   GestureDetector(
-    //     onTap: (){
-    //       Navigator.push(context, RouteGenerator.generateRoute(RouteSettings(name: Routes.testScreen)));
-    //     },
-    //     child: Container(
-    //       padding: const EdgeInsets.all(10),
-    //       margin: const EdgeInsets.only(right: 10),
-    //       decoration: BoxDecoration(
-    //         color: ProjectColors.white_shade2,
-    //         borderRadius: BorderRadius.circular(50),
-    //       ),
-    //       child: Icon(
-    //         Icons.notifications_none,
-    //         color: ProjectColors.primaryBlue,
-    //       ),
-    //     ),
-    //   ),
-    // ],
+    actions: [
+      GestureDetector(
+        onTap: (){
+          Navigator.push(context, RouteGenerator.generateRoute(RouteSettings(name: Routes.testScreen)));
+        },
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          margin: const EdgeInsets.only(right: 10),
+          decoration: BoxDecoration(
+            color: ProjectColors.white_shade2,
+            borderRadius: BorderRadius.circular(50),
+          ),
+          child: Icon(
+            Icons.notifications_none,
+            color: ProjectColors.primaryBlue,
+          ),
+        ),
+      ),
+    ],
   );
 }

@@ -1,8 +1,8 @@
 class AppConfigs{
   static String get getCurrencySignAfterAmount{
-    return "USD";
+    return "PKR";
   }
   static String get getCurrencySignBeforeAmount{
-    return "\$";
+    return "Rs:";
   }
 }
