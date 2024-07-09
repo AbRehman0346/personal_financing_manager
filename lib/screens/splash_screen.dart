@@ -19,41 +19,45 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
-
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), (){
+    Future.delayed(const Duration(seconds: 2), () {
       FirebaseAuth.instance.authStateChanges().listen((data) {
-        if (data == null){
+        if (data == null) {
           Navigator.pushAndRemoveUntil(
             context,
             RouteGenerator.generateRoute(
               const RouteSettings(name: Routes.signin_signup),
             ),
-                (route) => false,
+            (route) => false,
           );
         }
 
         User user = data!;
         ProjectData.authuser = user;
-        FirestoreAuth().getUserData(
-            ServicesHelperFunction().convertEmailToPhone(user.email!))
-            .then((value) => ProjectData.user = value).catchError((e){
+        FirestoreAuth()
+            .getUserData(
+                ServicesHelperFunction().convertEmailToPhone(user.email!))
+            .then((value) => ProjectData.user = value)
+            .catchError((e) {
           log("Exception-Main: $e");
           // navigating to signup and signin
-          Navigator.pushAndRemoveUntil(context, RouteGenerator.generateRoute(const RouteSettings(name: Routes.signin_signup)), (route) => false);
+          Navigator.pushAndRemoveUntil(
+              context,
+              RouteGenerator.generateRoute(
+                  const RouteSettings(name: Routes.signin_signup)),
+              (route) => false);
         });
         // navigating to home
         Navigator.pushAndRemoveUntil(
             context,
-            RouteGenerator.generateRoute(const RouteSettings(name: Routes.homeScreen)),
-                (route) => false);
+            RouteGenerator.generateRoute(
+                const RouteSettings(name: Routes.homeScreen)),
+            (route) => false);
       });
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -94,9 +98,6 @@ class _SplashScreenState extends State<SplashScreen> {
             color: Colors.white, letterSpacing: 1, fontWeight: FontWeight.bold),
       ),
     );
-
-
-
 
     return Scaffold(
       body: Stack(

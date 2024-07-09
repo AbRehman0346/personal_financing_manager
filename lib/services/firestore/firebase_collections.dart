@@ -5,7 +5,7 @@ import '../../Constants.dart';
 class Collections {
   static final FirebaseFirestore _store = FirebaseFirestore.instance;
   CollectionReference accountsCollection = _store.collection("accounts");
-  CollectionReference tripReference = _store.collection("all_trips");
+  CollectionReference tripsReference = _store.collection("all_trips");
   CollectionReference notificationReference = _store.collection("notification_tokens");
   // CollectionReference get userTripReference => tripReference.doc(ProjectData.user!.phone).collection("trips");
 }

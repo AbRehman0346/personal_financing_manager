@@ -6,8 +6,16 @@ import '../../AppConfigs.dart';
 import '../../Constants.dart';
 
 class MiddleCards extends StatelessWidget {
-  final CalcHomePageDataResponse data;
-  const MiddleCards({super.key, required this.data});
+  final String share;
+  final String ipaid;
+  final String iowed;
+  const MiddleCards({
+    super.key,
+    required this.share,
+    required this.ipaid,
+    required this.iowed,
+
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +64,7 @@ class MiddleCards extends StatelessWidget {
 
                     // Price
                     Text(
-                      "${AppConfigs.getCurrencySignBeforeAmount} ${data.share}",
+                      "${AppConfigs.getCurrencySignBeforeAmount} ${share}",
                       style: const TextStyle(fontSize: 18, color: Colors.grey),
                     ),
                   ],
@@ -108,7 +116,7 @@ class MiddleCards extends StatelessWidget {
                                 fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            "${AppConfigs.getCurrencySignBeforeAmount} ${data.ipaid}",
+                            "${AppConfigs.getCurrencySignBeforeAmount} ${ipaid}",
                             style: const TextStyle(
                                 fontSize: 18, color: Colors.grey),
                           ),
@@ -151,9 +159,9 @@ class MiddleCards extends StatelessWidget {
 
                           // Price
                           Text(
-                            "${AppConfigs.getCurrencySignBeforeAmount} ${data.owe}",
+                            "${AppConfigs.getCurrencySignBeforeAmount} $iowed",
                             style: TextStyle(
-                                fontSize: 18, color: double.parse(data.owe).isNegative ? Colors.red : Colors.green),
+                                fontSize: 18, color: double.tryParse(iowed)?.isNegative ?? false ? Colors.red : Colors.green),
                           ),
                         ],
                       ),

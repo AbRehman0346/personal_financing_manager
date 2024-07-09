@@ -31,7 +31,7 @@ class TripDetails extends StatefulWidget {
 
 class _TripDetailsState extends State<TripDetails> {
   late Trip trip;
-  List<int> _expandedPaymentDetails = [];
+  final List<int> _expandedPaymentDetails = [];
   bool enable = false;
 
   @override
@@ -44,7 +44,7 @@ class _TripDetailsState extends State<TripDetails> {
   @override
   Widget build(BuildContext context) {
     enable = trip.endDate == null;
-    Color heroChildrenColor = Colors.white;
+    Color heroChildrenColor = ProjectColors.white;
     var generalServices = GeneralServices();
     var balancedetails = TripDetails_BalanceDetailsComponent(payments: trip.payments, totalBalance: trip.budget, participants: trip.participants);
     double tripTotalExpense = trip.calcTripTotalExpense();
@@ -58,6 +58,28 @@ class _TripDetailsState extends State<TripDetails> {
           "Trip Details",
           style: TextStyle(fontFamily: ProjectFonts.protestStrikeRegular),
         ),
+        actions: [
+          // delete trip button...
+          TextButton(onPressed: (){
+            showDialog(context: context, builder: (_){
+              return AlertDialog(
+                backgroundColor: ProjectColors.white,
+                surfaceTintColor: ProjectColors.white,
+                shadowColor: ProjectColors.greyShadow,
+                title: const Text("Confirm Delete"),
+                content: const Text("Do you want to delete this trip"),
+                actions: [
+                  ElevatedButton(onPressed: goback, child: const Text("NO")),
+                  ElevatedButton(onPressed: deleteTirp, child: const Text("YES")),
+                ],
+              );
+            });
+
+
+          }, child:
+            Icon(Icons.delete, color: ProjectColors.dangerColor,)
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -300,8 +322,8 @@ class _TripDetailsState extends State<TripDetails> {
                                         bool result = await Firestore().updateBudget(budget, trip.tripId!);
                                         if (result){
                                           Fluttertoast.showToast(msg: "Updated Successfully");
-                                          Navigator.pop(context);
-                                          Navigator.pop(context);
+                                          goback();
+                                          goback();
                                           setState(() {
                                             trip.budget = dbudget;
                                           });
@@ -642,12 +664,28 @@ class _TripDetailsState extends State<TripDetails> {
             Fluttertoast.showToast(msg: "Trip has been Ended");
           });
           if(mounted){
-            Navigator.pop(context);
-            Navigator.pop(context);
-            Navigator.pop(context);
+            goback();
+            goback();
+            goback();
           }
         },
         primaryButtonText: "End Trip",
     );
+  }
+
+  void deleteTirp(){
+    if(trip.tripId == null){
+      Fluttertoast.showToast(msg: "Couldn't delete trip");
+      return;
+    }
+    Firestore db = Firestore();
+    db.deleteTrip(trip.tripId!);
+    Fluttertoast.showToast(msg: "Trip Deleted");
+    goback();
+    goback();
+  }
+
+  void goback(){
+    Navigator.pop(context);
   }
 }

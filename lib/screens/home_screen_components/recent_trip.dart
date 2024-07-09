@@ -8,15 +8,15 @@ import 'package:flutter/material.dart';
 import '../../services/firestore/firestore.dart';
 
 class RecentTrip extends StatelessWidget {
-  final List<DocumentSnapshot> docs;
-  const RecentTrip({super.key, required this.docs});
+  final List<DocumentSnapshot>? docs;
+  const RecentTrip({super.key, this.docs});
 
   @override
   Widget build(BuildContext context) {
     TripListViewItem item = TripListViewItem();
     return Container(
       width: MediaQuery.of(context).size.width * 0.92,
-      // height: 275,
+      height: docs == null ? 275 : null,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -33,7 +33,10 @@ class RecentTrip extends StatelessWidget {
             ),
           ),
           const Divider(),
-          docs.isEmpty
+          docs == null ? const SizedBox(
+              height: 200,
+              child: Center(child: CupertinoActivityIndicator())) :
+          docs!.isEmpty
               ? const SizedBox(
                   height: 200,
                   child: Center(
@@ -43,9 +46,9 @@ class RecentTrip extends StatelessWidget {
               : ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: docs.length,
+                  itemCount: docs!.length,
                   itemBuilder: (BuildContext context, int index) {
-                    Trip trip = Trip.fromDocumentSnapshot(docs[index]);
+                    Trip trip = Trip.fromDocumentSnapshot(docs![index]);
                     return GestureDetector(
                         onTap: () {
                           Navigator.push(

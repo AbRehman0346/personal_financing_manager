@@ -28,6 +28,77 @@ class _HomeState extends State<Home> {
     double topHeight = MediaQuery.of(context).padding.top;
     double footerSize = FooterProperties().footerHeight;
 
+    String balance = "Loading...";
+    String iowed = "Loading...";
+    String ipaid = "Loading...";
+    String share = "Loading...";
+    List<DocumentSnapshot>? docs;
+
+    Widget buildUI() {
+      return Scaffold(
+        backgroundColor: ProjectColors.white_shade2,
+        appBar: appbar,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height -
+                  appbarHeight -
+                  topHeight -
+                  footerSize,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // Upper main Box
+                    UpperMainBox(balance: balance),
+
+                    const SizedBox(height: 20),
+
+                    //   Middle Cards (My Share, I paid and I Owed)
+                    MiddleCards(iowed: iowed, ipaid: ipaid, share: share,),
+
+                    const SizedBox(height: 20),
+
+                    //   Recent Tips
+                    RecentTrip(docs: docs,),
+                  ],
+                ),
+              ),
+            ),
+
+            // Footer
+            SizedBox(
+              height: footerSize,
+              child: Footer(),
+            )
+          ],
+        ),
+
+
+
+        floatingActionButton: NewTripFloatingButton().build(context: context),
+      );
+    };
+
+    return FutureBuilder(future: Firestore().getTrips(), builder: (_, AsyncSnapshot snap){
+      if(snap.hasData){
+        docs = snap.data.docs;
+        CalcHomePageDataResponse homepagedata = CalcHomePageData().calc(docs!);
+        balance = homepagedata.balance;
+        iowed = homepagedata.owe;
+        ipaid = homepagedata.ipaid;
+        share = homepagedata.share;
+
+        return buildUI();
+      }else{
+        return buildUI();
+      }
+    });
+
+    // ____________________________
+
+
+
     return FutureBuilder(future: Firestore().getTrips(), builder: (_, AsyncSnapshot snap){
       if(snap.hasData){
         List<DocumentSnapshot> docs = snap.data.docs;
@@ -52,7 +123,7 @@ class _HomeState extends State<Home> {
                       const SizedBox(height: 20),
 
                       //   Middle Cards (My Share, I paid and I Owed)
-                      MiddleCards(data: homepagedata,),
+                      // MiddleCards(data: homepagedata,),
 
                       const SizedBox(height: 20),
 

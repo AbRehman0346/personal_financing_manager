@@ -214,9 +214,13 @@ class ProjectColors {
 
   static Color get white => Colors.white;
 
+  static Color get greyShadow => Colors.grey;
+
   static Color get white_shade2 => const Color.fromRGBO(245, 245, 245, 1);
 
   static Color get selectionColorBlack => const Color.fromRGBO(0, 0, 0, 1);
+
+  static Color get dangerColor => Colors.red;
 }
 
 class ProjectFonts {
