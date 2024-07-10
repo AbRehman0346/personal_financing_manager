@@ -33,6 +33,10 @@ class Storage{
     return await _uploadImage(image, url);
   }
 
+  Future<void> deleteTripImage(String url) async {
+    await _storage.refFromURL(url).delete();
+  }
+
   Future<String> getProfileImageFromPhone(String phone) async {
    //  it returns empty string if it can't find the image.
    try{

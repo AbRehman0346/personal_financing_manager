@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expense_tracking/route_generator.dart';
 import 'package:expense_tracking/screens/create_trip_screen/all_contacts_dialog.dart';
 import 'package:expense_tracking/services/firestore/firestore.dart';
 import 'package:expense_tracking/services/os.dart';
@@ -444,11 +445,9 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
       await Firestore().createTrip(trip);
       await sendCreateTripNotification(trip);
       if (mounted) {
+        Firestore.forceReloadDocs = true;
         Fluttertoast.showToast(msg: "Trip Created");
-        // Hiding the progress bar
-        Navigator.pop(context);
-        // Retuning from create trip page.
-        Navigator.pop(context);
+        Navigator.pushAndRemoveUntil(context, RouteGenerator.generateRoute(RouteSettings(name: Routes.homeScreen)), (route) => false);
       }
     } catch (e) {
       log("Exception in creating trip $e");

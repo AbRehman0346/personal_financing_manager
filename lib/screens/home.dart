@@ -78,16 +78,16 @@ class _HomeState extends State<Home> {
 
         floatingActionButton: NewTripFloatingButton().build(context: context),
       );
-    };
+    }
 
     return FutureBuilder(future: Firestore().getTrips(), builder: (_, AsyncSnapshot snap){
       if(snap.hasData){
         docs = snap.data.docs;
-        CalcHomePageDataResponse homepagedata = CalcHomePageData().calc(docs!);
-        balance = homepagedata.balance;
-        iowed = homepagedata.owe;
-        ipaid = homepagedata.ipaid;
-        share = homepagedata.share;
+        CalcHomePageDataResponse data = CalcHomePageData().calc(docs!);
+        balance = data.balance;
+        iowed = data.owe;
+        ipaid = data.ipaid;
+        share = data.share;
 
         return buildUI();
       }else{

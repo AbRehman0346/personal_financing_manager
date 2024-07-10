@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:expense_tracking/AppConfigs.dart';
 import 'package:expense_tracking/Constants.dart';
 import 'package:expense_tracking/models/trip_model.dart';
+import 'package:expense_tracking/route_generator.dart';
 import 'package:expense_tracking/screens/shared/display_image.dart';
 import 'package:expense_tracking/screens/trip_details_components/ShowFinalResultsDialog.dart';
 import 'package:expense_tracking/screens/trip_details_components/add_payment_dialog.dart';
@@ -70,7 +71,7 @@ class _TripDetailsState extends State<TripDetails> {
                 content: const Text("Do you want to delete this trip"),
                 actions: [
                   ElevatedButton(onPressed: goback, child: const Text("NO")),
-                  ElevatedButton(onPressed: deleteTirp, child: const Text("YES")),
+                  ElevatedButton(onPressed: deleteTrip, child: const Text("YES")),
                 ],
               );
             });
@@ -673,16 +674,17 @@ class _TripDetailsState extends State<TripDetails> {
     );
   }
 
-  void deleteTirp(){
+  void deleteTrip() async {
     if(trip.tripId == null){
       Fluttertoast.showToast(msg: "Couldn't delete trip");
       return;
     }
     Firestore db = Firestore();
-    db.deleteTrip(trip.tripId!);
+    CustomDialogs().showAndroidProgressBar(context);
+    await db.deleteTrip(trip);
+    Firestore.forceReloadDocs = true;
     Fluttertoast.showToast(msg: "Trip Deleted");
-    goback();
-    goback();
+    Navigator.pushAndRemoveUntil(context, RouteGenerator.generateRoute(const RouteSettings(name: Routes.homeScreen)), (route) => false);
   }
 
   void goback(){

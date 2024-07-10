@@ -9,6 +9,7 @@ import '../services_helper_functions.dart';
 import 'firebase_collections.dart';
 class Firestore extends Collections{
   static QuerySnapshot? _query;
+  static bool forceReloadDocs = false;
 
 
   Future<bool> createTrip(TripUploadModel trip) async {
@@ -66,24 +67,27 @@ class Firestore extends Collections{
     return trip;
   }
 
-  Future<QuerySnapshot> getTrips({bool resetDocs = false})async{
+  Future<QuerySnapshot> getTrips()async{
     TripModelFields f = TripModelFields();
     if (ProjectData.authuser == null){
       throw Exception("User data not found");
     }
 
-    if(_query != null && !resetDocs){
+    if(_query != null && !forceReloadDocs){
       return _query!;
     }
 
     String phone = ServicesHelperFunction().convertEmailToPhone(ProjectData.authuser!.email!);
-
     _query = await tripsReference.where(f.participantsField, arrayContains: phone).get();
+    forceReloadDocs = false;
     return _query!;
   }
 
-  Future<bool> deleteTrip(String docId) async {
-    await tripsReference.doc(docId).delete();
+  Future<bool> deleteTrip(Trip trip) async {
+    if(trip.image != null){
+      await Storage().deleteTripImage(trip.image ?? "");
+    }
+    await tripsReference.doc(trip.tripId).delete();
     return true;
   }
 }
