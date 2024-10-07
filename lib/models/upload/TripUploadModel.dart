@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../trip_model.dart';
 
 class TripUploadModel{
@@ -9,6 +11,7 @@ class TripUploadModel{
   String owner;
   Uint8List? image;
   String estimatedBudget;
+  FieldValue timestamp;
 
 
   TripUploadModel({
@@ -17,6 +20,7 @@ class TripUploadModel{
     required this.owner,
     required this.participants,
     required this.estimatedBudget,
+    required this.timestamp,
     this.image,
   });
 
@@ -33,6 +37,7 @@ class TripUploadModel{
       f.endDateField: null,
       f.owner: owner,
       f.estimatedBudget: estimatedBudget,
+      f.timestamp: timestamp,
     };
   }
 }

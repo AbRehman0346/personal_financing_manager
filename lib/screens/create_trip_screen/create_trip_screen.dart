@@ -420,9 +420,10 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
     //Validation
     if (name == "") {
       error = "Provide Trip Name";
-    } else if (participants.isEmpty) {
-      error = "Add at least one participant";
     }
+    // else if (participants.isEmpty) {
+    //   error = "Add at least one participant";
+    // }
 
     String owner = ProjectData.user!.phone;
     participants.add(owner);
@@ -440,6 +441,7 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
       participants: participants,
       owner: owner,
       estimatedBudget: estimatedBudget,
+      timestamp: FieldValue.serverTimestamp()
     );
     try {
       await Firestore().createTrip(trip);
@@ -463,6 +465,9 @@ class _CreateTripScreenState extends State<CreateTripScreen> {
 
   Future<void> sendCreateTripNotification(TripUploadModel trip) async {
     // Sending notification
+    if (trip.participants.isEmpty){
+      return;
+    }
     List<String> participants = trip.participants;
     participants = participants.where((element) => element != ProjectData.user!.phone).toList();
     log(participants.toString());

@@ -14,6 +14,7 @@ String owner = "owner";
   String endDateField = "end_date";
   String paymentField = "payments";
   String estimatedBudget = "budget";
+  String timestamp = "timestamp";
 }
 
 class Trip {
